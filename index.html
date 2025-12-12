@@ -1,0 +1,4820 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LSD Quiz (Ch1-3 + LMS)</title>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --card: #111a2e;
+        --muted: #8ea0c4;
+        --text: #e9f0ff;
+        --border: #223154;
+        --good: #1f8f5f;
+        --bad: #c13f3f;
+        --warn: #caa137;
+        --btn: #1a2745;
+        --btn2: #15203a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial;
+        background: linear-gradient(180deg, #070c16, var(--bg));
+        color: var(--text);
+      }
+      a {
+        color: inherit;
+      }
+      .container {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      .header {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: radial-gradient(
+          circle at 30% 20%,
+          #5dd6ff,
+          #2a6cff 45%,
+          #7c3aed
+        );
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      h1 {
+        font-size: 18px;
+        margin: 0;
+      }
+      .sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+      }
+      select,
+      button,
+      input[type="checkbox"] {
+        font: inherit;
+      }
+      select {
+        background: var(--btn2);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        outline: none;
+        min-width: 220px;
+      }
+      .btn {
+        background: var(--btn);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: transform 0.05s ease, background 0.15s ease;
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+      .btn:hover {
+        background: #203257;
+      }
+      .btn.primary {
+        background: linear-gradient(180deg, #2a6cff, #1f5bff);
+        border: 0;
+      }
+      .btn.primary:hover {
+        filter: brightness(1.05);
+      }
+      .btn.ghost {
+        background: transparent;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-top: 14px;
+      }
+      .card {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03),
+          rgba(255, 255, 255, 0.015)
+        );
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px;
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+      }
+      .meta {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .pill {
+        font-size: 12px;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.15);
+      }
+      .pill strong {
+        color: var(--text);
+        font-weight: 700;
+      }
+      .question {
+        font-size: 16px;
+        line-height: 1.5;
+        margin: 10px 0 0;
+      }
+      .answers {
+        display: grid;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .answer {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        text-align: left;
+        background: rgba(0, 0, 0, 0.18);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px;
+        cursor: pointer;
+        transition: transform 0.05s ease, background 0.15s ease,
+          border-color 0.15s ease;
+      }
+      .answer:hover {
+        background: rgba(0, 0, 0, 0.26);
+      }
+      .badge {
+        flex: 0 0 auto;
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0f1730;
+        color: white;
+        border: 1px solid var(--border);
+        font-weight: 800;
+      }
+      .answer .txt {
+        flex: 1;
+        min-width: 0;
+        color: white;
+      }
+      .answer.correct {
+        border-color: rgba(31, 143, 95, 0.9);
+        background: rgba(31, 143, 95, 0.14);
+      }
+      .answer.wrong {
+        border-color: rgba(193, 63, 63, 0.9);
+        background: rgba(193, 63, 63, 0.12);
+      }
+      .answer.dim {
+        opacity: 0.65;
+      }
+      .feedback {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(0, 0, 0, 0.16);
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .feedback.good {
+        border-color: rgba(31, 143, 95, 0.7);
+        color: #bff5da;
+        background: rgba(31, 143, 95, 0.1);
+      }
+      .feedback.bad {
+        border-color: rgba(193, 63, 63, 0.7);
+        color: #ffd0d0;
+        background: rgba(193, 63, 63, 0.1);
+      }
+      .feedback.warn {
+        border-color: rgba(202, 161, 55, 0.7);
+        color: #ffe9b2;
+        background: rgba(202, 161, 55, 0.1);
+      }
+      .footerbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+      }
+      .small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .progress {
+        height: 10px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 999px;
+        margin-top: 10px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+      .progress > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #2a6cff, #7c3aed);
+      }
+      .manualWrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+      .manualBox {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px dashed rgba(142, 160, 196, 0.45);
+        border-radius: 14px;
+        padding: 8px 10px;
+        background: rgba(0, 0, 0, 0.12);
+      }
+      .manualBox label {
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+      .manualBtns {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (min-width: 840px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <h1>LSD Quiz</h1>
+            <div class="sub">
+              Chương 1–3 + LSD_LMS • Responsive • Chọn đáp án là hiện đúng/sai
+              ngay
+            </div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <select id="datasetSelect" title="Chọn bộ câu hỏi">
+            <option value="chuong1">Chương 1</option>
+            <option value="chuong2">Chương 2</option>
+            <option value="chuong3">Chương 3</option>
+            <option value="lsd_lms">LSD_LMS (không có đáp án)</option>
+            <option value="random60">Random 50 câu (Ch1–Ch3)</option>
+          </select>
+          <button
+            class="btn primary"
+            id="btnRandom60"
+            title="Tạo đề random 50 câu từ chương 1 đến 3"
+          >
+            Random 50
+          </button>
+          <button
+            class="btn"
+            id="btnShuffle"
+            title="Trộn thứ tự câu trong bộ hiện tại"
+          >
+            Trộn
+          </button>
+          <button class="btn ghost" id="btnReset" title="Làm lại từ đầu">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="card">
+          <div class="meta">
+            <div class="pills">
+              <div class="pill">
+                Bộ: <strong id="pillDataset">Chương 1</strong>
+              </div>
+              <div class="pill">
+                Câu: <strong id="pillIndex">1</strong>/<strong id="pillTotal"
+                  >0</strong
+                >
+              </div>
+              <div class="pill">Đúng: <strong id="pillCorrect">0</strong></div>
+              <div class="pill">Sai: <strong id="pillWrong">0</strong></div>
+            </div>
+
+            <div class="manualWrap">
+              <div
+                class="manualBox"
+                title="Bật để có nút Kiểm tra + Next (bình thường không cần)"
+              >
+                <label
+                  ><input id="manualToggle" type="checkbox" /> Chế độ thủ
+                  công</label
+                >
+              </div>
+              <div class="manualBtns hidden" id="manualBtns">
+                <button class="btn" id="btnBack">Back</button>
+
+                <button class="btn" id="btnCheck">Kiểm tra</button>
+                <button class="btn" id="btnNext">Next</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="progress" aria-label="Tiến độ">
+            <div id="progressBar"></div>
+          </div>
+
+          <div class="question" id="qText">...</div>
+          <div class="answers" id="answers"></div>
+          <div class="feedback hidden" id="feedback"></div>
+
+          <div class="footerbar">
+            <div class="small" id="hint">
+              Tip: chọn đáp án để hiện đúng/sai. Auto sẽ tự chuyển câu tiếp
+              theo.
+            </div>
+            <div class="small" id="qid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const BANK = {
+        chuong1: [
+          {
+            id: "448387240",
+            source: "Chương 1",
+            text: "Cuối thế kỷ 19 đầu thế kỷ XX nguy cơ nào do các nước đế quốc gây ra chi phối trực tiếp đến lịch sử của nhiều nước Châu Á, Châu Phi, trong đó có Việt Nam…",
+            answers: [
+              { key: "A", text: "sự phát triển vượt bậc của nền kinh tế" },
+              { key: "B", text: "sự hình thành các tổ chức độc quyền" },
+              { key: "C", text: "tăng cường xâm lược thuộc địa" },
+              {
+                key: "D",
+                text: "chuẩn bị chiến tranh để chia lại thị trường thế giới",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387241",
+            source: "Chương 1",
+            text: "Năm 1923, Nguyễn Phan Long, Bùi Quang Chiêu đã thành lập tổ chức chính trị nào để tập hợp quần chúng đấu tranh?",
+            answers: [
+              { key: "A", text: "Việt Nam Quốc dân Đảng" },
+              { key: "B", text: "Đảng Thanh niên" },
+              { key: "C", text: "Đảng lập pháp" },
+              { key: "D", text: "Đảng Lập hiến" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387242",
+            source: "Chương 1",
+            text: "Thời gian thực dân Pháp tiến hành khai thác thuộc địa lần thứ nhất ở Việt Nam khi nào?",
+            answers: [
+              { key: "A", text: "1858-1884" },
+              { key: "B", text: "1884-1896" },
+              { key: "C", text: "1896-1913" },
+              { key: "D", text: "1914-1918" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387243",
+            source: "Chương 1",
+            text: "Trong đợt khai thác thuộc địa lần thứ nhất của thực dân Pháp ở nước ta có giai cấp mới nào được hình thành?",
+            answers: [
+              { key: "A", text: "Giai cấp tư sản" },
+              { key: "B", text: "Giai cấp tư sản và công nhân" },
+              { key: "C", text: "Giai cấp công nhân" },
+              { key: "D", text: "Giai cấp tiểu tư sản" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387244",
+            source: "Chương 1",
+            text: "Trước Chiến tranh thế giới thứ nhất, ở Việt Nam có những giai cấp, tầng lớp nào?",
+            answers: [
+              { key: "A", text: "Địa chủ phong kiến và nông dân" },
+              {
+                key: "B",
+                text: "Địa chủ phong kiến, nông dân, tư sản, tiểu tư sản và công nhân",
+              },
+              { key: "C", text: "Địa chủ phong kiến, nông dân và công nhân" },
+              { key: "D", text: "Địa chủ phong kiến, nông dân và tiểu tư sản" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387245",
+            source: "Chương 1",
+            text: "Dưới chế độ thực dân phong kiến, giai cấp nông dân Việt Nam có yêu cầu bức thiết nhất là gì?",
+            answers: [
+              { key: "A", text: "Độc lập dân tộc" },
+              { key: "B", text: "Ruộng đất" },
+              { key: "C", text: "Quyền bình đẳng nam, nữ" },
+              { key: "D", text: "Được giảm tô, giảm tức" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387246",
+            source: "Chương 1",
+            text: "Chọn phương án đúng nhất: Mâu thuẫn cơ bản và chủ yếu ở Việt Nam đầu thế kỷ XX là mâu thuẫn nào?",
+            answers: [
+              {
+                key: "A",
+                text: "Mâu thuẫn giữa giai cấp nông dân với giai cấp địa chủ phong kiến",
+              },
+              {
+                key: "B",
+                text: "Mâu thuẫn giữa giai cấp công nhân với giai cấp tư sản",
+              },
+              {
+                key: "C",
+                text: "Mâu thuẫn giữa công nhân và nông dân với đế quốc và phong kiến",
+              },
+              {
+                key: "D",
+                text: "Mâu thuẫn giữa toàn thể dân tộc Việt Nam với đế quốc xâm lược và tay sai của chúng",
+              },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387247",
+            source: "Chương 1",
+            text: "Đặc điểm nổi bật ra đời của giai cấp công nhân Việt Nam như thế nào?",
+            answers: [
+              {
+                key: "A",
+                text: "Ra đời trước giai cấp tư sản, trong cuộc khai thác thuộc địa lần thứ nhất của thực dân Pháp",
+              },
+              { key: "B", text: "Phần lớn xuất thân từ nông dân" },
+              {
+                key: "C",
+                text: "Chịu sự áp bức và bóc lột của đế quốc, phong kiến và tư sản",
+              },
+              { key: "D", text: "Cả a, b và c" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387248",
+            source: "Chương 1",
+            text: "Chọn đáp áp đúng nhất: Những giai cấp bị trị ở Việt Nam dưới chế độ thuộc địa của đế quốc Pháp là:",
+            answers: [
+              { key: "A", text: "Công nhân và nông dân" },
+              { key: "B", text: "Công nhân, nông dân, tiểu tư sản" },
+              {
+                key: "C",
+                text: "Công nhân, nông dân, tiểu tư sản, tư sản dân tộc",
+              },
+              {
+                key: "D",
+                text: "Công nhân, nông dân, tiểu tư sản, tư sản dân tộc, địa chủ vừa và nhỏ",
+              },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387249",
+            source: "Chương 1",
+            text: "Khi nào phong trào công nhân Việt Nam hoàn toàn trở thành một phong trào tự giác?",
+            answers: [
+              {
+                key: "A",
+                text: "Năm 1920 (tổ chức công hội ở Sài Gòn được thành lập)",
+              },
+              { key: "B", text: "Năm 1925 (cuộc bãi công Ba Son)" },
+              { key: "C", text: "Năm 1929 (sự ra đời ba tổ chức cộng sản)" },
+              { key: "D", text: "Năm 1930 (Đảng Cộng sản Việt Nam ra đời)" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387250",
+            source: "Chương 1",
+            text: "Nguyễn Ái Quốc lựa chọn con đường giải phóng dân tộc theo khuynh hướng chính trị vô sản vào thời gian nào?",
+            answers: [
+              { key: "A", text: "1917" },
+              { key: "B", text: "1918" },
+              { key: "C", text: "1919" },
+              { key: "D", text: "1920" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387251",
+            source: "Chương 1",
+            text: "Hội Việt Nam Cách mạng Thanh niên đã làm gì để truyền bá mạnh mẽ chủ nghĩa Mác-Lênin vào Việt Nam…",
+            answers: [
+              {
+                key: "A",
+                text: "bí mật đưa tác phẩm Đường cách mệnh của Nguyễn Ái Quốc về nước",
+              },
+              { key: "B", text: "đưa báo Thanh niên về nước" },
+              { key: "C", text: "thực hiện chủ trương “vô sản hóa”" },
+              {
+                key: "D",
+                text: "đưa lý luận giải phóng dân tộc của Nguyễn Ái Quốc về nước",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387252",
+            source: "Chương 1",
+            text: "Báo Đời sống Công nhân là của tổ chức nào?",
+            answers: [
+              { key: "A", text: "Đảng Xã hội Pháp" },
+              { key: "B", text: "Đảng Cộng sản Pháp" },
+              { key: "C", text: "Tổng Liên đoàn Lao động Pháp" },
+              { key: "D", text: "Hội Liên hiệp thuộc địa" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387253",
+            source: "Chương 1",
+            text: "Hội Liên hiệp thuộc địa được thành lập vào năm nào?",
+            answers: [
+              { key: "A", text: "1920" },
+              { key: "B", text: "1921" },
+              { key: "C", text: "1923" },
+              { key: "D", text: "1924" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387254",
+            source: "Chương 1",
+            text: "Nguyễn Ái Quốc đã đọc Sơ thảo lần thứ nhất Luận cương về vấn đề dân tộc và vấn đề thuộc địa khi nào? Ở đâu?",
+            answers: [
+              { key: "A", text: "7/ 1920 - Liên Xô" },
+              { key: "B", text: "7/ 1920 - Pháp" },
+              { key: "C", text: "7/1920 - Quảng Châu (Trung Quốc)" },
+              { key: "D", text: "8/1920 - Trung Quốc" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387255",
+            source: "Chương 1",
+            text: "Sự kiện gắn với hoạt động của Nguyễn Ái Quốc ở Liên Xô đó là…",
+            answers: [
+              { key: "A", text: "bỏ phiếu tán thành Quốc tế thứ III" },
+              { key: "B", text: "dự đại hội lần thứ 5 của Quốc tế Cộng Sản" },
+              { key: "C", text: "dự đại hội lần thứ 7 của Quốc tế Cộng sản" },
+              { key: "D", text: "viết tác phẩm Bản án chế độ thực dân Pháp" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387256",
+            source: "Chương 1",
+            text: "Việt Nam Quang Phục hội chuyển hướng về hoạt động trong nước Việt Nam từ khi…",
+            answers: [
+              { key: "A", text: "chiến tranh thế giới thứ nhất bùng nổ" },
+              {
+                key: "B",
+                text: "chiến tranh thế giới bước vào giai đoạn quyết liệt",
+              },
+              {
+                key: "C",
+                text: "Việt Nam bị ảnh hưởng nặng nề của chiến tranh thế giới thứ nhất",
+              },
+              { key: "D", text: "chiến tranh thế giới thứ nhất kết thúc" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387257",
+            source: "Chương 1",
+            text: 'Sự kiện nào được Nguyễn Ái Quốc đánh giá "như chim én nhỏ báo hiệu mùa Xuân"?',
+            answers: [
+              {
+                key: "A",
+                text: "Cách mạng tháng Mười Nga bùng nổ và thắng lợi",
+              },
+              { key: "B", text: "Sự thành lập Đảng Cộng sản Pháp" },
+              {
+                key: "C",
+                text: "Vụ mưu sát tên toàn quyền Méclanh của Phạm Hồng Thái",
+              },
+              {
+                key: "D",
+                text: "Sự thành lập Hội Việt Nam cách mạng Thanh niên",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387258",
+            source: "Chương 1",
+            text: "Phong trào đòi trả tự do cho cụ Phan Bội Châu diễn ra sôi nổi năm nào?",
+            answers: [
+              { key: "A", text: "1924" },
+              { key: "B", text: "1925" },
+              { key: "C", text: "1926" },
+              { key: "D", text: "1927" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387259",
+            source: "Chương 1",
+            text: "Nguyễn Ái Quốc từ Liên Xô về Quảng Châu (Trung Quốc) vào thời gian nào?",
+            answers: [
+              { key: "A", text: "12/1924" },
+              { key: "B", text: "12/1925" },
+              { key: "C", text: "11/1924" },
+              { key: "D", text: "10/1924" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387260",
+            source: "Chương 1",
+            text: 'Hội Việt Nam Cách mạng Thanh niên thực hiện chủ trương "vô sản hoá" khi nào?',
+            answers: [
+              { key: "A", text: "Cuối năm 1926 đầu năm 1927" },
+              { key: "B", text: "Cuối năm 1927 đầu năm 1928" },
+              { key: "C", text: "Cuối năm 1928 đầu năm 1929" },
+              { key: "D", text: "Cuối năm 1929 đầu năm 1930" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387261",
+            source: "Chương 1",
+            text: "Tên chính thức của tổ chức này được đặt tại Đại hội lần thứ nhất ở Quảng Châu (tháng 5-1929) là gì?",
+            answers: [
+              { key: "A", text: "Việt Nam Thanh niên cách mạng đồng chí Hội" },
+              { key: "B", text: "Hội Việt Nam cách mạng đồng minh" },
+              { key: "C", text: "Hội Việt Nam độc lập đồng minh" },
+              { key: "D", text: "Hội Việt Nam Cách mạng Thanh niên" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387262",
+            source: "Chương 1",
+            text: "Việt Nam Quốc dân Đảng được thành lập vào thời gian nào?",
+            answers: [
+              { key: "A", text: "12/1927" },
+              { key: "B", text: "11/1926" },
+              { key: "C", text: "8/1925" },
+              { key: "D", text: "7/1925" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387263",
+            source: "Chương 1",
+            text: "Ai là người đã tham gia sáng lập Việt Nam Quốc dân Đảng 1927?",
+            answers: [
+              { key: "A", text: "Tôn Quang Phiệt" },
+              { key: "B", text: "Trần Huy Liệu" },
+              { key: "C", text: "Phạm Tuấn Tài" },
+              { key: "D", text: "Phan Bội Châu" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387264",
+            source: "Chương 1",
+            text: "Khởi nghĩa Yên Bái nổ ra vào thời gian nào?",
+            answers: [
+              { key: "A", text: "9-2-1930" },
+              { key: "B", text: "9-3-1930" },
+              { key: "C", text: "3-2-1930" },
+              { key: "D", text: "9-3-1931" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387265",
+            source: "Chương 1",
+            text: "Tổ chức cộng sản nào ra đời đầu tiên ở Việt Nam?",
+            answers: [
+              { key: "A", text: "Hội Việt Nam cách mạng thanh Niên" },
+              { key: "B", text: "Đông Dương cộng sản Đảng" },
+              { key: "C", text: "An Nam cộng sản Đảng" },
+              { key: "D", text: "Đông Dương cộng sản liên đoàn" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387266",
+            source: "Chương 1",
+            text: "Chi bộ cộng sản đầu tiên ở Việt Nam được thành lập khi nào?",
+            answers: [
+              { key: "A", text: "Cuối tháng 3/1929" },
+              { key: "B", text: "Đầu tháng 3/1929" },
+              { key: "C", text: "4/1929" },
+              { key: "D", text: "5/1929" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387267",
+            source: "Chương 1",
+            text: "Chi bộ cộng sản đầu tiên gồm mấy đảng viên? Ai làm bí thư chi bộ?",
+            answers: [
+              { key: "A", text: "5 đảng viên - Bí thư Trịnh Đình Cửu" },
+              { key: "B", text: "6 đảng viên - Bí thư Ngô Gia Tự" },
+              { key: "C", text: "7 đảng viên - Bí thư Trịnh Đình Cửu" },
+              { key: "D", text: "7 đảng viên - Bí thư Trần Văn Cung" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387268",
+            source: "Chương 1",
+            text: "Đông Dương Cộng sản Đảng và An Nam Cộng sản Đảng được ra đời từ tổ chức tiền thân nào?",
+            answers: [
+              { key: "A", text: "Tân Việt cách mạng Đảng" },
+              { key: "B", text: "Hội Việt Nam cách mạng Thanh niên" },
+              { key: "C", text: "Việt Nam cách mạng đồng chí Hội" },
+              { key: "D", text: "Cả A, B và C" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387269",
+            source: "Chương 1",
+            text: "Đông Dương cộng sản liên đoàn hợp nhất vào Đảng Cộng sản Việt Nam khi nào?",
+            answers: [
+              { key: "A", text: "22/2/1930" },
+              { key: "B", text: "24/2/1930" },
+              { key: "C", text: "24/2/1931" },
+              { key: "D", text: "20/2/1931" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387270",
+            source: "Chương 1",
+            text: "Quan hệ giữa Tân Việt cách mạng Đảng và Hội Việt Nam Cách mạng Thanh niên là…",
+            answers: [
+              {
+                key: "A",
+                text: "Tân Việt cử người sang dự các lớp huấn luyện của Thanh niên",
+              },
+              { key: "B", text: "Tân Việt vận động hợp nhất với Thanh niên" },
+              {
+                key: "C",
+                text: "Hội Việt Nam Cách mạng Thanh niên vận động hợp nhất với Tân Việt",
+              },
+              {
+                key: "D",
+                text: "Tân Việt cử người sang dự các lớp huấn luyện của Thanh niên và vận động hợp nhất với Thanh niên",
+              },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387271",
+            source: "Chương 1",
+            text: "Các cuộc khởi nghĩa trong phong trào Cần Vương ở Việt Nam cuối thế kỷ XIX, cuộc khởi nghĩa diễn ra lâu nhất là…",
+            answers: [
+              { key: "A", text: "khởi nghĩa Hùng Lĩnh" },
+              { key: "B", text: "khởi nghĩa Ba Đình" },
+              { key: "C", text: "khởi nghĩa Bãi Sậy" },
+              { key: "D", text: "khởi nghĩa Hương Khê" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387272",
+            source: "Chương 1",
+            text: "Thành phần lãnh đạo phong trào yêu nước chống Pháp ở Việt Nam đầu thế kỷ XX là…",
+            answers: [
+              { key: "A", text: "văn thân sĩ phu phong kiến yêu nước" },
+              {
+                key: "B",
+                text: "tầng lớp Nho học trẻ đang trên con đường tư sản hóa",
+              },
+              {
+                key: "C",
+                text: "các sĩ phu yêu nước theo khuynh hướng phong kiến",
+              },
+              {
+                key: "D",
+                text: "những nhà yêu nước đã thức tỉnh với thời cuộc",
+              },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387273",
+            source: "Chương 1",
+            text: "Ở Việt Nam, giai cấp có trước khi thực dân Pháp tiến hành khai thác thuộc địa là…",
+            answers: [
+              { key: "A", text: "giai cấp nông dân, địa chủ phong kiến" },
+              {
+                key: "B",
+                text: "giai cấp nông dân, địa chủ phong kiến, thợ thủ công",
+              },
+              {
+                key: "C",
+                text: "giai cấp nông dân, địa chủ phong kiến, tư sản dân tộc",
+              },
+              {
+                key: "D",
+                text: "giai cấp nông dân, địa chủ phong kiến, công nhân",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387274",
+            source: "Chương 1",
+            text: "Tổ chức Đông Dương Cộng sản Đảng được thành lập vào thời gian nào?",
+            answers: [
+              { key: "A", text: "6/1927" },
+              { key: "B", text: "6/1928" },
+              { key: "C", text: "6/1929" },
+              { key: "D", text: "5/1929" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387275",
+            source: "Chương 1",
+            text: "Tổ chức An Nam Cộng sản Đảng được thành lập vào thời gian nào?",
+            answers: [
+              { key: "A", text: "6/1927" },
+              { key: "B", text: "11/1928" },
+              { key: "C", text: "11/1929" },
+              { key: "D", text: "7/1929" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387276",
+            source: "Chương 1",
+            text: "Tổ chức Đông Dương Cộng sản liên Đoàn được thành lập vào thời gian nào?",
+            answers: [
+              { key: "A", text: "7/1927" },
+              { key: "B", text: "9/1929" },
+              { key: "C", text: "2/1930" },
+              { key: "D", text: "3/1930" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387277",
+            source: "Chương 1",
+            text: "Thời gian ra bản Tuyên đạt nêu rõ việc thành lập Đông Dương Cộng sản Liên đoàn?",
+            answers: [
+              { key: "A", text: "7-1929" },
+              { key: "B", text: "9-1929" },
+              { key: "C", text: "10-1929" },
+              { key: "D", text: "1-1930" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387278",
+            source: "Chương 1",
+            text: "Ban Thường vụ Trung ương Đảng ra Quyết nghị chấp nhận Đông Dương cộng sản liên đoàn là một bộ phận của Đảng Cộng sản Việt Nam vào thời gian nào?",
+            answers: [
+              { key: "A", text: "22-2-1930" },
+              { key: "B", text: "20-2-1930" },
+              { key: "C", text: "24-2-1930" },
+              { key: "D", text: "22-3-1930" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387279",
+            source: "Chương 1",
+            text: "Do đâu Nguyễn Ái Quốc đã triệu tập và chủ trì Hội nghị thành lập Đảng đầu năm 1930?",
+            answers: [
+              { key: "A", text: "Được sự uỷ nhiệm của Quốc tế Cộng sản" },
+              { key: "B", text: "Nhận được chỉ thị của Quốc tế Cộng sản" },
+              { key: "C", text: "Sự chủ động của Nguyễn Ái Quốc" },
+              { key: "D", text: "Các tổ chức cộng sản trong nước đề nghị" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387280",
+            source: "Chương 1",
+            text: "Đại biểu các tổ chức cộng sản nào đã tham dự Hội nghị thành lập Đảng đầu năm 1930?",
+            answers: [
+              {
+                key: "A",
+                text: "Đông Dương cộng sản Đảng, An Nam cộng sản Đảng và Đông Dương cộng sản liên đoàn",
+              },
+              {
+                key: "B",
+                text: "Đông Dương cộng sản Đảng và An Nam cộng sản Đảng",
+              },
+              {
+                key: "C",
+                text: "An Nam cộng sản Đảng và Đông Dương cộng sản liên đoàn",
+              },
+              {
+                key: "D",
+                text: "Đông Dương cộng sản Đảng và Đông Dương cộng sản liên đoàn",
+              },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387281",
+            source: "Chương 1",
+            text: "Phong trào do Việt Nam Quốc dân Đảng khởi xướng thuộc khuynh hướng nào trong các khuynh hướng sau?",
+            answers: [
+              {
+                key: "A",
+                text: "Phong trào yêu nước theo khuynh hướng Cần Vương",
+              },
+              {
+                key: "B",
+                text: "Phong trào yêu nước theo khuynh hướng phong kiến",
+              },
+              {
+                key: "C",
+                text: "Phong trào yêu nước theo khuynh hướng dân chủ tư sản",
+              },
+              {
+                key: "D",
+                text: "Phong trào yêu nước theo khuynh hướng vô sản.",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387282",
+            source: "Chương 1",
+            text: "Hội nghị Hợp nhất thành lập Đảng CSVN (3/2/1930) thông qua các văn kiện nào sau đây:",
+            answers: [
+              { key: "A", text: "Chánh cương vắn tắt" },
+              { key: "B", text: "Sách lược vắn tắt" },
+              { key: "C", text: "Điều lệ vắn tắt và Chương trình vắn tắt" },
+              { key: "D", text: "Cả A, B và C" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387283",
+            source: "Chương 1",
+            text: "Nội dung nào sau đây nằm trong Cương lĩnh đầu tiên của Đảng?",
+            answers: [
+              {
+                key: "A",
+                text: "Đánh đổ đế quốc chủ nghĩa Pháp và bọn phong kiến, làm cho nước Nam hoàn toàn độc lập.",
+              },
+              {
+                key: "B",
+                text: "Tư sản dân quyền cách mạng là thời kỳ dự bị để làm xã hội cách mạng.",
+              },
+              {
+                key: "C",
+                text: "Chỉ có giải phóng giai cấp vô sản thì mới giải phóng được dân tộc.",
+              },
+              { key: "D", text: "Đảng có vững cách mạng mới thành công" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387284",
+            source: "Chương 1",
+            text: "Cương lĩnh đầu tiên của Đảng đã xác định mục tiêu chiến lược của cách mạng Việt Nam là gì?",
+            answers: [
+              {
+                key: "A",
+                text: "Làm tư sản dân quyền cách mạng và thổ địa cách mạng để đi tới xã hội cộng sản.",
+              },
+              {
+                key: "B",
+                text: "Xây dựng một nước Việt Nam dân giầu, nước mạnh xã hội công bằng, dân chủ và văn minh.",
+              },
+              {
+                key: "C",
+                text: "Cách mạng tư sản dân quyền - phản đế và điền địa - lập chính quyền của công nông bằng hình thức Xô viết, để dự bị điều kiện đi tới cách mạng xã hội chủ nghĩa.",
+              },
+              { key: "D", text: "Cả A và B." },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387285",
+            source: "Chương 1",
+            text: "Sau Hội nghị thành lập Đảng, Ban chấp hành Trung ương lâm thời của Đảng được thành lập do ai đứng đầu?",
+            answers: [
+              { key: "A", text: "Hà Huy Tập" },
+              { key: "B", text: "Trần Phú" },
+              { key: "C", text: "Lê Hồng Phong" },
+              { key: "D", text: "Trịnh Đình Cửu" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387286",
+            source: "Chương 1",
+            text: "Vào thời điểm nào Nguyễn Ái Quốc gửi Quốc tế Cộng sản bản Báo cáo về việc thành lập Đảng Cộng sản Việt Nam?",
+            answers: [
+              { key: "A", text: "ngày 8-2-1930" },
+              { key: "B", text: "Ngày 10-2-1920" },
+              { key: "C", text: "Ngày 18-2-1930" },
+              { key: "D", text: "Ngày 28-2-1930" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387287",
+            source: "Chương 1",
+            text: "Văn kiện nào của Đảng đặt nhiệm vụ chống đế quốc lên hàng đầu?",
+            answers: [
+              {
+                key: "A",
+                text: "Chính cương vắn tắt, Sách lược vắn tắt do Hội nghị thành lập Đảng thông qua",
+              },
+              {
+                key: "B",
+                text: "Luận cương chính trị tháng 10-1930 (Dự án cương lĩnh để thảo luận trong Đảng)",
+              },
+              {
+                key: "C",
+                text: "Thư của Trung ương gửi cho các cấp đảng bộ (12-1930)",
+              },
+              {
+                key: "D",
+                text: "Nghị quyết Đại hội lần thứ nhất của Đảng (3-1935)",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387288",
+            source: "Chương 1",
+            text: "Trong các điểm sau, chỉ rõ điểm khác nhau giữa Cương lĩnh chính trị đầu tiên của Đảng và Luận cương chính trị tháng 10-1930 là:",
+            answers: [
+              { key: "A", text: "Phương hướng chiến lược của cách mạng." },
+              { key: "B", text: "Chủ trương tập hợp lực lượng cách mạng" },
+              { key: "C", text: "Vai trò lãnh đạo cách mạng." },
+              { key: "D", text: "Phương pháp cách mạng." },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387289",
+            source: "Chương 1",
+            text: 'Văn kiện nào của Đảng nhấn mạnh "vấn đề thổ địa là cái cốt của cách mạng tư sản dân quyền"?',
+            answers: [
+              { key: "A", text: "Chính cương vắn tắt, Sách lược vắn tắt." },
+              {
+                key: "B",
+                text: "Chỉ thị thành lập Hội phản đế đồng minh (18-11-1930).",
+              },
+              { key: "C", text: "Luận cương chính trị tháng 10-1930" },
+              {
+                key: "D",
+                text: "Chung quanh vấn đề chính sách mới của Đảng (10-1936).",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387290",
+            source: "Chương 1",
+            text: "Lần đầu tiên nhân dân Việt Nam kỷ niệm ngày Quốc tế lao động vào năm nào?",
+            answers: [
+              { key: "A", text: "1930" },
+              { key: "B", text: "1931" },
+              { key: "C", text: "1936" },
+              { key: "D", text: "1938" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387291",
+            source: "Chương 1",
+            text: "Tư tưởng của Việt Nam Quốc dân Đảng chịu ảnh hưởng của tư tưởng nào ở Trung Quốc?",
+            answers: [
+              { key: "A", text: "chủ nghĩa dân tộc" },
+              { key: "B", text: "chủ nghĩa Tam Dân của Tôn Trung Sơn" },
+              { key: "C", text: "chủ nghĩa Mác-Lênin" },
+              { key: "D", text: "chủ nghĩa dân sinh" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387292",
+            source: "Chương 1",
+            text: "Tháng 12 năm 1920, Nguyễn Ái Quốc bỏ phiếu tán thành quốc tế cộng sản và tham gia sáng lập Đảng cộng sản Pháp điều đó khẳng định…",
+            answers: [
+              {
+                key: "A",
+                text: "Nguyễn Ái Quốc đã đến với Cách mạng tháng 10 Nga năm 1917",
+              },
+              {
+                key: "B",
+                text: "Nguyễn Ái Quốc đã trở thành người của Đảng Cộng Sản",
+              },
+              {
+                key: "C",
+                text: "Nguyễn Ái Quốc đọc Sơ thảo luận cương của Lênin về vấn đề dân tộc và thuộc địa",
+              },
+              {
+                key: "D",
+                text: "Nguyễn Ái Quốc quyết tâm đi theo con đường cách mạng vô sản",
+              },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387293",
+            source: "Chương 1",
+            text: "Dưới chế độ thống trị của thực dân Pháp và phong kiến, nông dân Việt Nam có yêu cầu bức thiết nhất về…",
+            answers: [
+              { key: "A", text: "độc lập dân tộc" },
+              { key: "B", text: "ruộng đất" },
+              { key: "C", text: "quyền làm việc ngày 8 giờ" },
+              { key: "D", text: "tự do hội họp, đi lại" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387294",
+            source: "Chương 1",
+            text: "Bản hiệp ước ngày mùng 6 tháng 6 năm 1884 mà Pháp ký với triều Nguyễn Việt Nam gồm 19 khoản, căn bản dựa trên…",
+            answers: [
+              {
+                key: "A",
+                text: "hòa ước Nhâm Tuất ngày mùng 5 tháng 6 năm 1882",
+              },
+              { key: "B", text: "hiệp ước Giáp Tuất 15 tháng 3 năm 1874" },
+              { key: "C", text: "hiệp ước Hác-măng ngày 25 tháng 8 năm 1883" },
+              { key: "D", text: "không dựa trên hiệp ước nào cả" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387295",
+            source: "Chương 1",
+            text: "Để đẩy mạnh việc đánh chiếm toàn bộ Việt Nam bằng mọi giá sau khi được tăng viện, Pháp đem quân đánh thẳng vào đâu…?",
+            answers: [
+              { key: "A", text: "cửa biển Hải Phòng" },
+              { key: "B", text: "cửa biển Thuận An" },
+              { key: "C", text: "thành Hà Nội" },
+              { key: "D", text: "kinh thành Huế" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387296",
+            source: "Chương 1",
+            text: "Sau khi bình định xong Việt Nam, thực dân Pháp thực hiện chính sách cai trị theo kiểu thực dân cũ ở Việt Nam biểu hiện…",
+            answers: [
+              { key: "A", text: "mọi quyền hành nắm trong tay người Pháp" },
+              {
+                key: "B",
+                text: "dựng chính quyền bù nhìn tay sai vua quan Nam Triều để điều hành",
+              },
+              {
+                key: "C",
+                text: "mọi quyền hành nằm trong tay vua quan Nam Triều",
+              },
+              {
+                key: "D",
+                text: "lợi dụng bọn địa chủ phong kiến để thực hiện âm mưu xâm lược",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387297",
+            source: "Chương 1",
+            text: "Tư tưởng cốt lõi của Cương lĩnh chính trị đầu tiên của Đảng cộng sản Việt Nam do Nguyễn Ái Quốc soạn thảo là…",
+            answers: [
+              { key: "A", text: "độc lập dân tộc và ruộng đất dân cày" },
+              { key: "B", text: "giương cao ngọn cờ giải phóng dân tộc" },
+              {
+                key: "C",
+                text: "độc lập và tự do là tư tưởng cốt lõi của cương lĩnh",
+              },
+              {
+                key: "D",
+                text: "đánh đế quốc và đánh phong kiến là cốt lõi của cương lĩnh",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387298",
+            source: "Chương 1",
+            text: "Nguyễn Ái Quốc ví chủ nghĩa đế quốc như con đỉa có hai vòi điều đó được thể hiện trong…",
+            answers: [
+              { key: "A", text: "Bản án chế độ thực dân Pháp" },
+              { key: "B", text: "Đường Kách mệnh" },
+              { key: "C", text: "Báo Thanh niên" },
+              { key: "D", text: "Người Cùng Khổ" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387299",
+            source: "Chương 1",
+            text: "Sáng ngày mùng 1 tháng 9 năm 1858, Thực dân Pháp gửi tối hậu thư đòi triều đình Huế phải trả lời trong 2 giờ, chưa hết hạn Pháp đã…",
+            answers: [
+              {
+                key: "A",
+                text: "nã đạn lên bờ rồi đổ bộ chiếm bán đảo Sơn Trà Đà Nẵng",
+              },
+              { key: "B", text: "đánh thẳng vào triều đình nhà Nguyễn ở Huế" },
+              { key: "C", text: "cho quân bao vây Đà Nẵng" },
+              { key: "D", text: "tập trung lực lượng đánh vào Huế" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387300",
+            source: "Chương 1",
+            text: "Tổ chức Việt Nam Quốc dân Đảng đề ra tôn chỉ và mục đích gì để hành động…",
+            answers: [
+              {
+                key: "A",
+                text: "đánh đuổi Đế Quốc Pháp giành độc lập cho dân tộc",
+              },
+              {
+                key: "B",
+                text: "đánh đuổi đế quốc, xóa bỏ ngôi vua, thiết lập dân quyền",
+              },
+              {
+                key: "C",
+                text: "đánh đổ bọn phong kiến tồn tại lâu đời trên đất nước Việt Nam",
+              },
+              { key: "D", text: "Không thành công cũng thành nhân" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387301",
+            source: "Chương 1",
+            text: "Năm 1919, để đòi quyền lợi cho mình, giai cấp tư sản Việt Nam khởi xướng phong trào…",
+            answers: [
+              { key: "A", text: "chống độc quyền cảng Sài Gòn" },
+              { key: "B", text: "chống độc quyền xuất khẩu lúa gạo ở Nam Kỳ" },
+              {
+                key: "C",
+                text: "phong trào Chấn Hưng Nội hóa, bài trừ ngoại hóa",
+              },
+              {
+                key: "D",
+                text: "thành lập Đảng Lập Hiến để tập hợp lực lượng quần chúng",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387302",
+            source: "Chương 1",
+            text: "Một trong những đặc điểm cơ bản nhất của giai cấp công nhân Việt Nam…",
+            answers: [
+              {
+                key: "A",
+                text: "bị ba tầng áp bức bóc lột của đế quốc, phong kiến, tư sản dân tộc",
+              },
+              {
+                key: "B",
+                text: "có quan hệ tự nhiên gắn bó với giai cấp nông dân",
+              },
+              {
+                key: "C",
+                text: "kế thừa truyền thống yêu nước anh hùng và bất khuất của dân tộc",
+              },
+              {
+                key: "D",
+                text: "vừa ra đời đã tiếp thu ảnh hưởng của Cách mạng tháng 10 Nga",
+              },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387303",
+            source: "Chương 1",
+            text: "Tổ chức hoạt động của phong trào yêu nước chống Pháp đầu thế kỷ XX ở Việt Nam là…",
+            answers: [
+              {
+                key: "A",
+                text: "biến đấu tranh giai cấp thành tổ chức chính trị sơ khai",
+              },
+              { key: "B", text: "tổ chức đấu tranh theo lề lối phong kiến" },
+              { key: "C", text: "Tổ chức bạo động và đấu tranh vũ trang" },
+              { key: "D", text: "tổ chức tập hợp quần chúng diễn thuyết" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387304",
+            source: "Chương 1",
+            text: "Trong cuộc khai thác thuộc địa của thực dân Pháp ở Việt Nam, nền kinh tế Việt Nam về cơ bản là nền kinh tế…",
+            answers: [
+              {
+                key: "A",
+                text: "nền kinh tế sản xuất nhỏ lạc hậu và phụ thuộc",
+              },
+              { key: "B", text: "đan xen giữa nông nghiệp và công nghiệp" },
+              {
+                key: "C",
+                text: "nền kinh tế nông nghiệp phát triển theo hướng tư bản chủ nghĩa",
+              },
+              {
+                key: "D",
+                text: "có những yếu tố tích cực và tiêu cực đan xen",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387305",
+            source: "Chương 1",
+            text: "Một trong những thủ đoạn chính trị của thực dân pháp nhằm nô dịch lâu dài nhân dân ta sau chiến tranh thế giới thứ nhất là…",
+            answers: [
+              {
+                key: "A",
+                text: "lôi kéo mua chuộc người Việt Nam thuộc tầng lớp trên của xã hội",
+              },
+              { key: "B", text: "thâu tóm quyền lực vào tay người Pháp" },
+              { key: "C", text: "thực hiện chính sách chia để trị" },
+              { key: "D", text: "thực hiện chính sách ngu dân" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387306",
+            source: "Chương 1",
+            text: "Nguyễn Ái Quốc lựa chọn con đường giải phóng dân tộc Việt Nam theo con đường cách mạng vô sản gắn với sự kiện lịch sử..",
+            answers: [
+              {
+                key: "A",
+                text: "nghiên cứu học tập Cách mạng tháng 10 Nga năm 1917",
+              },
+              {
+                key: "B",
+                text: "tìm hiểu cuộc cách mạng tư sản Pháp năm 1789",
+              },
+              {
+                key: "C",
+                text: "bỏ phiếu tán thành quốc tế cộng sản tại Pháp năm 1922",
+              },
+              { key: "D", text: "đọc Sơ thảo luận cương Lênin năm 1920" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387307",
+            source: "Chương 1",
+            text: "Chính sách chia để trị của thực dân Pháp áp dụng ở Việt Nam, trong đó Nam Kỳ bị Pháp coi như…",
+            answers: [
+              { key: "A", text: "vùng đất tự trị" },
+              { key: "B", text: "vùng đất thuộc Pháp" },
+              { key: "C", text: "vùng đất nửa bảo hộ" },
+              { key: "D", text: "vùng đất bảo hộ" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387308",
+            source: "Chương 1",
+            text: "Lực lượng nghĩa quân bao gồm đông đảo nông dân các dân tộc thiểu số ở miền núi Nghệ An, Hà Tĩnh, Quảng Bình đó là đặc điểm của cuộc khởi nghĩa…?",
+            answers: [
+              { key: "A", text: "Khởi nghĩa Bãi Sậy" },
+              { key: "B", text: "Khởi nghĩa Hương Khê" },
+              { key: "C", text: "Khởi nghĩa Hùng Lĩnh" },
+              { key: "D", text: "Khởi nghĩa Ba Đình" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387309",
+            source: "Chương 1",
+            text: "Sự kiện chứng tỏ bước chuyển biến từ tự phát sang tự giác của công nhân Việt Nam…",
+            answers: [
+              {
+                key: "A",
+                text: "năm 1920 tổ chức công hội ở Sài Gòn được thành lập",
+              },
+              { key: "B", text: "năm 1925 cuộc bãi công nhân Ba Son" },
+              { key: "C", text: "năm 1929 sự ra đời của các tổ chức cộng sản" },
+              { key: "D", text: "năm 1930 Đảng Cộng sản Việt Nam ra đời" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387310",
+            source: "Chương 1",
+            text: "Trong cuộc khai thác thuộc địa lần thứ nhất của Pháp ở Việt Nam, giai cấp nào không đứng về phía nhân dân chống Pháp…",
+            answers: [
+              { key: "A", text: "địa chủ phong kiến nói chung" },
+              { key: "B", text: "đại địa chủ phong kiến" },
+              { key: "C", text: "tư sản dân tộc và tiểu tư sản" },
+              { key: "D", text: "tư sản và địa chủ nói chung" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387311",
+            source: "Chương 1",
+            text: "Cuối thế kỷ 19 đầu thế kỷ 20 nguy cơ nào do các nước đế quốc gây ra chi phối trực tiếp đến lịch sử của nhiều nước Châu Á, Châu Phi trong đó có Việt Nam…",
+            answers: [
+              { key: "A", text: "sự phát triển vượt bậc của nền kinh tế" },
+              { key: "B", text: "sự hình thành các tổ chức độc quyền" },
+              { key: "C", text: "tăng cường xâm lược thuộc địa" },
+              {
+                key: "D",
+                text: "chuẩn bị chiến tranh để chia lại thị trường thế giới",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387312",
+            source: "Chương 1",
+            text: "Năm 1923, Nguyễn Phan Long, Bùi Quang Chiêu đã thành lập tổ chức chính trị nào để tập hợp quần chúng đấu tranh?",
+            answers: [
+              { key: "A", text: "Việt Nam Quốc dân Đảng" },
+              { key: "B", text: "Đảng Thanh niên" },
+              { key: "C", text: "Đảng lập pháp" },
+              { key: "D", text: "Đảng Lập hiến" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387313",
+            source: "Chương 1",
+            text: "Năm 1858, thực dân Pháp nổ súng tấn công vào đâu để mở đầu thời kỳ xâm lược Việt Nam…?",
+            answers: [
+              { key: "A", text: "Đà Nẵng" },
+              { key: "B", text: "Huế" },
+              { key: "C", text: "Sài Gòn" },
+              { key: "D", text: "Quy Nhơn" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387314",
+            source: "Chương 1",
+            text: "Nguyên nhân cơ bản nhất quyết định sự bùng nổ của phong trào cách mạng 30 - 31 là…",
+            answers: [
+              {
+                key: "A",
+                text: "ảnh hưởng của cuộc khủng hoảng kinh tế 29 - 33",
+              },
+              {
+                key: "B",
+                text: "thực dân Pháp tiến hành khủng bố trắng sau cuộc khởi nghĩa Yên Bái",
+              },
+              { key: "C", text: "Đảng Cộng sản Việt Nam ra đời" },
+              {
+                key: "D",
+                text: "địa chủ phong kiến cấu kết với thực dân Pháp đàn áp bóc lột thậm tệ đối với nông dân",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387315",
+            source: "Chương 1",
+            text: "Trần Dân tiên đã viết “việc đó tuy nhỏ nhưng nó báo hiệu bắt đầu thời đại đấu tranh dân tộc như chim én nhỏ báo hiệu mùa xuân” đó là sự kiện…",
+            answers: [
+              { key: "A", text: "cuộc bãi công của công nhân Ba Son" },
+              {
+                key: "B",
+                text: "cuộc đấu tranh đòi nhà cầm quyền Pháp thả Phan Bội Châu năm 1925",
+              },
+              { key: "C", text: "phong trào để tang Phan Châu Trinh 1926" },
+              {
+                key: "D",
+                text: "tiếng Bom Phạm Hồng Thái tại Sa Diện Quảng Châu tháng 6 năm 1924",
+              },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387316",
+            source: "Chương 1",
+            text: "Do đâu có hội nghị thành lập Đảng cộng sản Việt Nam đầu năm 1930…",
+            answers: [
+              { key: "A", text: "được sự ủy nhiệm của Quốc tế Cộng sản" },
+              {
+                key: "B",
+                text: "Nguyễn Ái Quốc nhận được chỉ thị của Quốc tế Cộng Sản",
+              },
+              {
+                key: "C",
+                text: "yêu cầu thống nhất các tổ chức Đảng và sự chủ động của Nguyễn Ái Quốc",
+              },
+              { key: "D", text: "các tổ chức cộng sản trong nước đề nghị" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387317",
+            source: "Chương 1",
+            text: "Năm 1920, Nguyễn Ái Quốc bỏ phiếu tán thành Quốc tế 3 vì…",
+            answers: [
+              {
+                key: "A",
+                text: "quốc tế này bênh vực cho quyền lợi của các nước thuộc địa",
+              },
+              {
+                key: "B",
+                text: "quốc tế này giúp nhân dân ta đấu tranh chống thực dân Pháp",
+              },
+              {
+                key: "C",
+                text: "quốc tế này đề ra đường lối cho cách mạng Việt Nam",
+              },
+              {
+                key: "D",
+                text: "quốc tế này chủ trương thành lập Mặt trận giải phóng dân tộc ở Việt Nam Câu 79: Năm 1929, Hội Việt Nam Cách mạng Thanh niên phân hóa thành các tổ chức… A.\tĐông Dương Cộng Sản Đảng B.\tAn Nam Cộng Sản Đảng *C.\tĐông Dương Cộng Sản Đảng và An Nam Cộng Sản Đảng D.\tĐông Dương Cộng sản Liên Đoàn",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387318",
+            source: "Chương 1",
+            text: "Thực chất của cuộc vận động chống độc quyền ở Thương cảng Sài Gòn độc quyền xuất khẩu lúa gạo ở Nam Kỳ là gì?",
+            answers: [
+              {
+                key: "A",
+                text: "là cuộc vận động chính trị tập hợp quần chúng của giai cấp tư sản Việt Nam",
+              },
+              {
+                key: "B",
+                text: "là cuộc xung đột quyền lợi của tư sản Việt Nam với tư sản Pháp",
+              },
+              {
+                key: "C",
+                text: "là cuộc vận động đấu tranh dân tộc của tư sản Việt Nam",
+              },
+              {
+                key: "D",
+                text: "là cuộc đấu tranh trên lĩnh vực kinh tế của tư sản Việt Nam",
+              },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387319",
+            source: "Chương 1",
+            text: "Trong phong trào yêu nước dân chủ công khai từ 1919 đến 1926 có hai sự kiện trong nước tiêu biểu nhất đó là…",
+            answers: [
+              {
+                key: "A",
+                text: "phong trào đấu tranh của công nhân Ba Son và công nhân Phú Riềng",
+              },
+              {
+                key: "B",
+                text: "cuộc đấu tranh đòi nhà cầm quyền Pháp thả Phan Bội Châu và đám tang Phan Châu Trinh",
+              },
+              {
+                key: "C",
+                text: "tiếng Bom của Phạm Hồng Thái nổ tại Sa Diện và Nguyễn Ái Quốc gửi yêu sách đến hội nghị Vécxai",
+              },
+              {
+                key: "D",
+                text: "tiếng Bom của Phạm Hồng Thái và phong trào đấu tranh đòi thả Phan Bội Châu",
+              },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387320",
+            source: "Chương 1",
+            text: "Sự kiện gắn với hoạt động của Nguyễn Ái Quốc ở Liên Xô đó là…",
+            answers: [
+              { key: "A", text: "bỏ phiếu tán thành Quốc tế thứ III" },
+              { key: "B", text: "dự đại hội lần thứ 5 của Quốc tế Cộng Sản" },
+              { key: "C", text: "dự đại hội lần thứ 7 của Quốc tế Cộng sản" },
+              { key: "D", text: "viết tác phẩm Bản án chế độ thực dân Pháp" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387321",
+            source: "Chương 1",
+            text: "Việt Nam Quang Phục hội chuyển hướng về hoạt động trong nước Việt Nam từ khi…",
+            answers: [
+              { key: "A", text: "chiến tranh thế giới thứ nhất bùng nổ" },
+              {
+                key: "B",
+                text: "chiến tranh thế giới bước vào giai đoạn quyết liệt",
+              },
+              {
+                key: "C",
+                text: "Việt Nam bị ảnh hưởng nặng nề của chiến tranh thế giới thứ nhất",
+              },
+              { key: "D", text: "chiến tranh thế giới thứ nhất kết thúc" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387322",
+            source: "Chương 1",
+            text: "Sự kiện chứng tỏ tư tưởng cách mạng Tháng Mười Nga đã thấm sâu vào giai cấp công nhân Việt Nam là…",
+            answers: [
+              { key: "A", text: "cuộc bãi công của công nhân Ba Son" },
+              {
+                key: "B",
+                text: "Nguyễn Ái Quốc đọc Sơ thảo luận cương của Lênin",
+              },
+              {
+                key: "C",
+                text: "Nguyễn Ái Quốc gửi yêu sách đến hội nghị Vécxai",
+              },
+              { key: "D", text: "tổ chức cộng sản ra đời năm 1929" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387323",
+            source: "Chương 1",
+            text: "Sau thất bại trong trận Cầu Giấy ở Bắc Kỳ Việt Nam lần thứ hai ngày 19 tháng 05 năm 1883, thực dân Pháp đã…",
+            answers: [
+              {
+                key: "A",
+                text: "cho quân rút khỏi Hà Nội để bảo toàn lực lượng",
+              },
+              {
+                key: "B",
+                text: "củng cố quyết tâm xâm chiếm toàn bộ Việt Nam",
+              },
+              {
+                key: "C",
+                text: "tăng viện binh từ Pháp sang để tái chiếm Hà Nội",
+              },
+              { key: "D", text: "tiến hành đàn áp khủng bố nhân dân ta" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387324",
+            source: "Chương 1",
+            text: "Cuối thế kỷ 19 đầu thế kỷ XX nguy cơ nào do các nước đế quốc gây ra chi phối trực tiếp đến lịch sử của nhiều nước Châu Á, Châu Phi, trong đó có Việt Nam…",
+            answers: [
+              { key: "A", text: "sự phát triển vượt bậc của nền kinh tế" },
+              { key: "B", text: "sự hình thành các tổ chức độc quyền" },
+              { key: "C", text: "tăng cường xâm lược thuộc địa" },
+              {
+                key: "D",
+                text: "chuẩn bị chiến tranh để chia lại thị trường thế giới",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387325",
+            source: "Chương 1",
+            text: "Thời gian thực dân Pháp tiến hành khai thác thuộc địa lần thứ nhất ở Việt Nam khi nào?",
+            answers: [
+              { key: "A", text: "1858-1884" },
+              { key: "B", text: "1884-1896" },
+              { key: "C", text: "1896-1913" },
+              { key: "D", text: "1914-1918" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387326",
+            source: "Chương 1",
+            text: "Trong đợt khai thác thuộc địa lần thứ nhất của thực dân Pháp ở nước ta có giai cấp mới nào được hình thành?",
+            answers: [
+              { key: "A", text: "Giai cấp tư sản" },
+              { key: "B", text: "Giai cấp tư sản và công nhân" },
+              { key: "C", text: "Giai cấp công nhân" },
+              { key: "D", text: "Giai cấp tiểu tư sản" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387327",
+            source: "Chương 1",
+            text: "Trước Chiến tranh thế giới thứ nhất, ở Việt Nam có những giai cấp, tầng lớp nào?",
+            answers: [
+              { key: "A", text: "Địa chủ phong kiến và nông dân" },
+              {
+                key: "B",
+                text: "Địa chủ phong kiến, nông dân, tư sản, tiểu tư sản và công nhân",
+              },
+              { key: "C", text: "Địa chủ phong kiến, nông dân và công nhân" },
+              { key: "D", text: "Địa chủ phong kiến, nông dân và tiểu tư sản" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387328",
+            source: "Chương 1",
+            text: "Dưới chế độ thực dân phong kiến, giai cấp nông dân Việt Nam có yêu cầu bức thiết nhất là gì?",
+            answers: [
+              { key: "A", text: "Độc lập dân tộc" },
+              { key: "B", text: "Ruộng đất" },
+              { key: "C", text: "Quyền bình đẳng nam, nữ" },
+              { key: "D", text: "Được giảm tô, giảm tức" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387329",
+            source: "Chương 1",
+            text: "Chọn phương án đúng nhất: Mâu thuẫn cơ bản và chủ yếu ở Việt Nam đầu thế kỷ XX là mâu thuẫn nào?",
+            answers: [
+              {
+                key: "A",
+                text: "Mâu thuẫn giữa giai cấp nông dân với giai cấp địa chủ phong kiến",
+              },
+              {
+                key: "B",
+                text: "Mâu thuẫn giữa giai cấp công nhân với giai cấp tư sản",
+              },
+              {
+                key: "C",
+                text: "Mâu thuẫn giữa công nhân và nông dân với đế quốc và phong kiến",
+              },
+              {
+                key: "D",
+                text: "Mâu thuẫn giữa toàn thể dân tộc Việt Nam với đế quốc xâm lược và tay sai của chúng",
+              },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387330",
+            source: "Chương 1",
+            text: "Đặc điểm nổi bật ra đời của giai cấp công nhân Việt Nam như thế nào?",
+            answers: [
+              {
+                key: "A",
+                text: "Ra đời trước giai cấp tư sản, trong cuộc khai thác thuộc địa lần thứ nhất của thực dân Pháp",
+              },
+              { key: "B", text: "Phần lớn xuất thân từ nông dân" },
+              {
+                key: "C",
+                text: "Chịu sự áp bức và bóc lột của đế quốc, phong kiến và tư sản",
+              },
+              { key: "D", text: "Cả a, b và c" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387331",
+            source: "Chương 1",
+            text: "Chọn đáp áp đúng nhất: Những giai cấp bị trị ở Việt Nam dưới chế độ thuộc địa của đế quốc Pháp là:",
+            answers: [
+              { key: "A", text: "Công nhân và nông dân" },
+              { key: "B", text: "Công nhân, nông dân, tiểu tư sản" },
+              {
+                key: "C",
+                text: "Công nhân, nông dân, tiểu tư sản, tư sản dân tộc",
+              },
+              {
+                key: "D",
+                text: "Công nhân, nông dân, tiểu tư sản, tư sản dân tộc, địa chủ vừa và nhỏ",
+              },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387332",
+            source: "Chương 1",
+            text: "Khi nào phong trào công nhân Việt Nam hoàn toàn trở thành một phong trào tự giác?",
+            answers: [
+              {
+                key: "A",
+                text: "Năm 1920 (tổ chức công hội ở Sài Gòn được thành lập)",
+              },
+              { key: "B", text: "Năm 1925 (cuộc bãi công Ba Son)" },
+              { key: "C", text: "Năm 1929 (sự ra đời ba tổ chức cộng sản)" },
+              { key: "D", text: "Năm 1930 (Đảng Cộng sản Việt Nam ra đời)" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387333",
+            source: "Chương 1",
+            text: "Nguyễn Ái Quốc lựa chọn con đường giải phóng dân tộc theo khuynh hướng chính trị vô sản vào thời gian nào?",
+            answers: [
+              { key: "A", text: "1917" },
+              { key: "B", text: "1918" },
+              { key: "C", text: "1919" },
+              { key: "D", text: "1920" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387334",
+            source: "Chương 1",
+            text: "Báo Đời sống Công nhân là của tổ chức nào?",
+            answers: [
+              { key: "A", text: "Đảng Xã hội Pháp" },
+              { key: "B", text: "Đảng Cộng sản Pháp" },
+              { key: "C", text: "Tổng Liên đoàn Lao động Pháp" },
+              { key: "D", text: "Hội Liên hiệp thuộc địa" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387335",
+            source: "Chương 1",
+            text: "Hội Liên hiệp thuộc địa được thành lập vào năm nào?",
+            answers: [
+              { key: "A", text: "1920" },
+              { key: "B", text: "1921" },
+              { key: "C", text: "1923" },
+              { key: "D", text: "1924" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387336",
+            source: "Chương 1",
+            text: 'Sự kiện nào được Nguyễn Ái Quốc đánh giá "như chim én nhỏ báo hiệu mùa Xuân"?',
+            answers: [
+              {
+                key: "A",
+                text: "Cách mạng tháng Mười Nga bùng nổ và thắng lợi",
+              },
+              { key: "B", text: "Sự thành lập Đảng Cộng sản Pháp" },
+              {
+                key: "C",
+                text: "Vụ mưu sát tên toàn quyền Méclanh của Phạm Hồng Thái",
+              },
+              {
+                key: "D",
+                text: "Sự thành lập Hội Việt Nam cách mạng Thanh niên",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387337",
+            source: "Chương 1",
+            text: "Phong trào đòi trả tự do cho cụ Phan Bội Châu diễn ra sôi nổi năm nào?",
+            answers: [
+              { key: "A", text: "1924" },
+              { key: "B", text: "1925" },
+              { key: "C", text: "1926" },
+              { key: "D", text: "1927" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387338",
+            source: "Chương 1",
+            text: "Nguyễn Ái Quốc từ Liên Xô về Quảng Châu (Trung Quốc) vào thời gian nào?",
+            answers: [
+              { key: "A", text: "12/1924" },
+              { key: "B", text: "12/1925" },
+              { key: "C", text: "11/1924" },
+              { key: "D", text: "10/1924" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387339",
+            source: "Chương 1",
+            text: 'Hội Việt Nam Cách mạng Thanh niên thực hiện chủ trương "vô sản hoá" khi nào?',
+            answers: [
+              { key: "A", text: "Cuối năm 1926 đầu năm 1927" },
+              { key: "B", text: "Cuối năm 1927 đầu năm 1928" },
+              { key: "C", text: "Cuối năm 1928 đầu năm 1929" },
+              { key: "D", text: "Cuối năm 1929 đầu năm 1930" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387458",
+            source: "Chương 1",
+            text: "Tên chính thức của tổ chức này được đặt tại Đại hội lần thứ nhất ở Quảng Châu (tháng 5-1929) là gì?",
+            answers: [
+              { key: "A", text: "Việt Nam Thanh niên cách mạng đồng chí Hội" },
+              { key: "B", text: "Hội Việt Nam cách mạng đồng minh" },
+              { key: "C", text: "Hội Việt Nam độc lập đồng minh" },
+              { key: "D", text: "Hội Việt Nam Cách mạng Thanh niên" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387459",
+            source: "Chương 1",
+            text: "Việt Nam Quốc dân Đảng được thành lập vào thời gian nào?",
+            answers: [
+              { key: "A", text: "12/1927" },
+              { key: "B", text: "11/1926" },
+              { key: "C", text: "8/1925" },
+              { key: "D", text: "7/1925" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387460",
+            source: "Chương 1",
+            text: "Ai là người đã tham gia sáng lập Việt Nam Quốc dân Đảng 1927?",
+            answers: [
+              { key: "A", text: "Tôn Quang Phiệt" },
+              { key: "B", text: "Trần Huy Liệu" },
+              { key: "C", text: "Phạm Tuấn Tài" },
+              { key: "D", text: "Phan Bội Châu" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387461",
+            source: "Chương 1",
+            text: "Khởi nghĩa Yên Bái nổ ra vào thời gian nào?",
+            answers: [
+              { key: "A", text: "9-2-1930" },
+              { key: "B", text: "9-3-1930" },
+              { key: "C", text: "3-2-1930" },
+              { key: "D", text: "9-3-1931" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387462",
+            source: "Chương 1",
+            text: "Chi bộ cộng sản đầu tiên ở Việt Nam được thành lập khi nào?",
+            answers: [
+              { key: "A", text: "Cuối tháng 3/1929" },
+              { key: "B", text: "Đầu tháng 3/1929" },
+              { key: "C", text: "4/1929" },
+              { key: "D", text: "5/1929" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387463",
+            source: "Chương 1",
+            text: "Chi bộ cộng sản đầu tiên gồm mấy đảng viên? Ai làm bí thư chi bộ?",
+            answers: [
+              { key: "A", text: "5 đảng viên - Bí thư Trịnh Đình Cửu" },
+              { key: "B", text: "6 đảng viên - Bí thư Ngô Gia Tự" },
+              { key: "C", text: "7 đảng viên - Bí thư Trịnh Đình Cửu" },
+              { key: "D", text: "7 đảng viên - Bí thư Trần Văn Cung" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387464",
+            source: "Chương 1",
+            text: "Đông Dương Cộng sản Đảng và An Nam Cộng sản Đảng được ra đời từ tổ chức tiền thân nào?",
+            answers: [
+              { key: "A", text: "Tân Việt cách mạng Đảng" },
+              { key: "B", text: "Hội Việt Nam cách mạng Thanh niên" },
+              { key: "C", text: "Việt Nam cách mạng đồng chí Hội" },
+              { key: "D", text: "Cả A, B và C" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387465",
+            source: "Chương 1",
+            text: "Đông Dương cộng sản liên đoàn hợp nhất vào Đảng Cộng sản Việt Nam khi nào?",
+            answers: [
+              { key: "A", text: "22/2/1930" },
+              { key: "B", text: "24/2/1930" },
+              { key: "C", text: "24/2/1931" },
+              { key: "D", text: "20/2/1931" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387466",
+            source: "Chương 1",
+            text: "Tổ chức Đông Dương Cộng sản Đảng được thành lập vào thời gian nào?",
+            answers: [
+              { key: "A", text: "6/1927" },
+              { key: "B", text: "6/1928" },
+              { key: "C", text: "6/1929" },
+              { key: "D", text: "5/1929" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387467",
+            source: "Chương 1",
+            text: "Tổ chức An Nam Cộng sản Đảng được thành lập vào thời gian nào?",
+            answers: [
+              { key: "A", text: "6/1927" },
+              { key: "B", text: "6/1928" },
+              { key: "C", text: "8/1929" },
+              { key: "D", text: "7/1929" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387468",
+            source: "Chương 1",
+            text: "Tổ chức Đông Dương Cộng sản liên Đoàn được thành lập vào thời gian nào?",
+            answers: [
+              { key: "A", text: "7/1927" },
+              { key: "B", text: "1/1930" },
+              { key: "C", text: "2/1930" },
+              { key: "D", text: "3/1930" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387469",
+            source: "Chương 1",
+            text: "Thời gian ra bản Tuyên đạt nêu rõ việc thành lập Đông Dương Cộng sản Liên đoàn?",
+            answers: [
+              { key: "A", text: "7-1929" },
+              { key: "B", text: "9-1929" },
+              { key: "C", text: "10-1929" },
+              { key: "D", text: "1-1930" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387470",
+            source: "Chương 1",
+            text: "Ban Thường vụ Trung ương Đảng ra Quyết nghị chấp nhận Đông Dương cộng sản liên đoàn là một bộ phận của Đảng Cộng sản Việt Nam vào thời gian nào?",
+            answers: [
+              { key: "A", text: "22-2-1930" },
+              { key: "B", text: "20-2-1930" },
+              { key: "C", text: "24-2-1930" },
+              { key: "D", text: "22-3-1930" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387471",
+            source: "Chương 1",
+            text: "Do đâu Nguyễn Ái Quốc đã triệu tập và chủ trì Hội nghị thành lập Đảng đầu năm 1930?",
+            answers: [
+              { key: "A", text: "Được sự uỷ nhiệm của Quốc tế Cộng sản" },
+              { key: "B", text: "Nhận được chỉ thị của Quốc tế Cộng sản" },
+              { key: "C", text: "Sự chủ động của Nguyễn Ái Quốc" },
+              { key: "D", text: "Các tổ chức cộng sản trong nước đề nghị" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387472",
+            source: "Chương 1",
+            text: "Đại biểu các tổ chức cộng sản nào đã tham dự Hội nghị thành lập Đảng đầu năm 1930?",
+            answers: [
+              {
+                key: "A",
+                text: "Đông Dương cộng sản Đảng, An Nam cộng sản Đảng và Đông Dương cộng sản liên đoàn",
+              },
+              {
+                key: "B",
+                text: "Đông Dương cộng sản Đảng và An Nam cộng sản Đảng",
+              },
+              {
+                key: "C",
+                text: "An Nam cộng sản Đảng và Đông Dương cộng sản liên đoàn",
+              },
+              {
+                key: "D",
+                text: "Đông Dương cộng sản Đảng và Đông Dương cộng sản liên đoàn",
+              },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387473",
+            source: "Chương 1",
+            text: "Phong trào do Việt Nam Quốc dân Đảng khởi xướng thuộc khuynh hướng nào trong các khuynh hướng sau?",
+            answers: [
+              {
+                key: "A",
+                text: "Phong trào yêu nước theo khuynh hướng Cần Vương",
+              },
+              {
+                key: "B",
+                text: "Phong trào yêu nước theo khuynh hướng phong kiến",
+              },
+              {
+                key: "C",
+                text: "Phong trào yêu nước theo khuynh hướng dân chủ tư sản",
+              },
+              {
+                key: "D",
+                text: "Phong trào yêu nước theo khuynh hướng vô sản.",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387474",
+            source: "Chương 1",
+            text: "Hội nghị Hợp nhất thành lập Đảng CSVN (3/2/1930) thông qua các văn kiện nào sau đây:",
+            answers: [
+              { key: "A", text: "Chánh cương vắn tắt" },
+              { key: "B", text: "Sách lược vắn tắt" },
+              { key: "C", text: "Điều lệ vắn tắt và Chương trình vắn tắt" },
+              { key: "D", text: "Cả A, B và C" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387475",
+            source: "Chương 1",
+            text: "Nội dung nào sau đây nằm trong Cương lĩnh đầu tiên của Đảng?",
+            answers: [
+              {
+                key: "A",
+                text: "Đánh đổ đế quốc chủ nghĩa Pháp và bọn phong kiến, làm cho nước Nam hoàn toàn độc lập.",
+              },
+              {
+                key: "B",
+                text: "Tư sản dân quyền cách mạng là thời kỳ dự bị để làm xã hội cách mạng.",
+              },
+              {
+                key: "C",
+                text: "Chỉ có giải phóng giai cấp vô sản thì mới giải phóng được dân tộc.",
+              },
+              { key: "D", text: "Đảng có vững cách mạng mới thành công" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387476",
+            source: "Chương 1",
+            text: "Cương lĩnh đầu tiên của Đảng đã xác định mục tiêu chiến lược của cách mạng Việt Nam là gì?",
+            answers: [
+              {
+                key: "A",
+                text: "Làm tư sản dân quyền cách mạng và thổ địa cách mạng để đi tới xã hội cộng sản.",
+              },
+              {
+                key: "B",
+                text: "Xây dựng một nước Việt Nam dân giầu, nước mạnh xã hội công bằng, dân chủ và văn minh.",
+              },
+              {
+                key: "C",
+                text: "Cách mạng tư sản dân quyền - phản đế và điền địa - lập chính quyền của công nông bằng hình thức Xô viết, để dự bị điều kiện đi tới cách mạng xã hội chủ nghĩa.",
+              },
+              { key: "D", text: "Cả a và b." },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387477",
+            source: "Chương 1",
+            text: "Sau Hội nghị thành lập Đảng, Ban chấp hành Trung ương lâm thời của Đảng được thành lập do ai đứng đầu?",
+            answers: [
+              { key: "A", text: "Hà Huy Tập" },
+              { key: "B", text: "Trần Phú" },
+              { key: "C", text: "Lê Hồng Phong" },
+              { key: "D", text: "Trịnh Đình Cửu" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387478",
+            source: "Chương 1",
+            text: "Tổ chức cộng sản nào ra đời đầu tiên ở Việt Nam?",
+            answers: [
+              { key: "A", text: "Hội Việt Nam cách mạng thanh Niên" },
+              { key: "B", text: "Đông Dương cộng sản Đảng" },
+              { key: "C", text: "An Nam cộng sản Đảng" },
+              { key: "D", text: "Đông Dương cộng sản liên đoàn" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387479",
+            source: "Chương 1",
+            text: "Vào thời điểm nào Nguyễn Ái Quốc gửi Quốc tế Cộng sản bản Báo cáo về việc thành lập Đảng Cộng sản Việt Nam?",
+            answers: [
+              { key: "A", text: "ngày 8-2-1930" },
+              { key: "B", text: "Ngày 10-2-1920" },
+              { key: "C", text: "Ngày 18-2-1930" },
+              { key: "D", text: "Ngày 28-2-1930" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387480",
+            source: "Chương 1",
+            text: "Văn kiện nào của Đảng đặt nhiệm vụ chống đế quốc lên hàng đầu?",
+            answers: [
+              {
+                key: "A",
+                text: "Chính cương vắn tắt, Sách lược vắn tắt do Hội nghị thành lập Đảng thông qua",
+              },
+              {
+                key: "B",
+                text: "Luận cương chính trị tháng 10-1930 (Dự án cương lĩnh để thảo luận trong Đảng)",
+              },
+              {
+                key: "C",
+                text: "Thư của Trung ương gửi cho các cấp đảng bộ (12-1930)",
+              },
+              {
+                key: "D",
+                text: "Nghị quyết Đại hội lần thứ nhất của Đảng (3-1935)",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387481",
+            source: "Chương 1",
+            text: "Trong các điểm sau, chỉ rõ điểm khác nhau giữa Cương lĩnh chính trị đầu tiên của Đảng và Luận cương chính trị tháng 10-1930 là:",
+            answers: [
+              { key: "A", text: "Phương hướng chiến lược của cách mạng." },
+              { key: "B", text: "Chủ trương tập hợp lực lượng cách mạng" },
+              { key: "C", text: "Vai trò lãnh đạo cách mạng." },
+              { key: "D", text: "Phương pháp cách mạng." },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387482",
+            source: "Chương 1",
+            text: 'Văn kiện nào của Đảng nhấn mạnh "vấn đề thổ địa là cái cốt của cách mạng tư sản dân quyền"?',
+            answers: [
+              { key: "A", text: "Chính cương vắn tắt, Sách lược vắn tắt." },
+              {
+                key: "B",
+                text: "Chỉ thị thành lập Hội phản đế đồng minh (18-11-1930).",
+              },
+              { key: "C", text: "Luận cương chính trị tháng 10-1930" },
+              {
+                key: "D",
+                text: "Chung quanh vấn đề chính sách mới của Đảng (10-1936).",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387483",
+            source: "Chương 1",
+            text: "Lần đầu tiên nhân dân Việt Nam kỷ niệm ngày Quốc tế lao động vào năm nào?",
+            answers: [
+              { key: "A", text: "1930" },
+              { key: "B", text: "1931" },
+              { key: "C", text: "1936" },
+              { key: "D", text: "1938" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387484",
+            source: "Chương 1",
+            text: "So với Cương lĩnh chính trị đầu tiên của Đảng, Luận cương chính trị (10 - 1930) không có sự khác biệt về…",
+            answers: [
+              { key: "A", text: "lực lượng cách mạng" },
+              { key: "B", text: "phạm vi, quy mô" },
+              { key: "C", text: "mối quan hệ giữa nhiệm vụ dân tộc - dân chủ" },
+              { key: "D", text: "phương hướng chiến lược của cách mạng" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387485",
+            source: "Chương 1",
+            text: "Lực lượng chính của cách mạng Việt Nam được xác định trong Luận cương chính trị (10-1930) là…",
+            answers: [
+              { key: "A", text: "công nhân và nông dân" },
+              { key: "B", text: "toàn thể nhân dân" },
+              { key: "C", text: "nông dân và tiểu tư sản" },
+              { key: "D", text: "nông dân và tư sản dân tộc" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387486",
+            source: "Chương 1",
+            text: "Luận cương chính trị tháng 10/1930 của Đảng Cộng sản Đông Dương không đưa ngọn cờ dân tộc lên hàng đầu mà nặng về đấu tranh giai cấp là do…",
+            answers: [
+              {
+                key: "A",
+                text: "đánh giá chưa đúng khả năng chống đế quốc và phong kiến của tư sản dân tộc",
+              },
+              {
+                key: "B",
+                text: "chưa xác định được mâu thuẫn chủ yếu trong xã hội Đông Dương thuộc địa",
+              },
+              {
+                key: "C",
+                text: "chưa xác định được mâu thuẫn cơ bản trong xã hội Đông Dương thuộc địa",
+              },
+              {
+                key: "D",
+                text: "chịu sự chi phối của tư tưởng hữu khuynh từ các đảng cộng sản trên thế giới",
+              },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387487",
+            source: "Chương 1",
+            text: "Cao trào cách mạng Việt Nam năm 1930 bắt đầu bị đế quốc Pháp đàn áp khốc liệt từ khi nào?",
+            answers: [
+              { key: "A", text: "Đầu năm 1930" },
+              { key: "B", text: "Cuối năm 1930" },
+              { key: "C", text: "Đầu năm 1931" },
+              { key: "D", text: "Cuối năm 1931" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448387488",
+            source: "Chương 1",
+            text: "Phong trào cách mạng ở Việt Nam trong những năm 1930 - 1931 để lại bài học kinh nghiệm gì cho Cách mạng tháng Tám năm 1945?",
+            answers: [
+              {
+                key: "A",
+                text: "Sử dụng bạo lực cách mạng của quần chúng để giành chính quyền",
+              },
+              {
+                key: "B",
+                text: "Kết hợp các hình thức đấu tranh bí mật, công khai và hợp pháp",
+              },
+              {
+                key: "C",
+                text: "Đi từ khởi nghĩa từng phần tiến lên tổng khởi nghĩa giành chính quyền",
+              },
+              {
+                key: "D",
+                text: "Thành lập ở mỗi nước Đông Dương một hình thức mặt trận riêng",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387489",
+            source: "Chương 1",
+            text: "Tên của lực lượng vũ trang được thành lập ở Nghệ Tĩnh trong cao trào cách mạng năm 1930 là gì?",
+            answers: [
+              { key: "A", text: "Du kích" },
+              { key: "B", text: "Tự vệ" },
+              { key: "C", text: "Tự vệ đỏ" },
+              { key: "D", text: "Tự vệ chiến đấu" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387490",
+            source: "Chương 1",
+            text: "Sự ra đời của các Xô viết ở Nghệ An và Hà Tĩnh là đỉnh cao của phong trào cách mạng 1930 - 1931 vì…",
+            answers: [
+              {
+                key: "A",
+                text: "đã hoàn thành mục tiêu đề ra trong Luận cương chính trị tháng 10/1930",
+              },
+              {
+                key: "B",
+                text: "đây là mốc đánh dấu sự tan rã của bộ máy chính quyền thực dân và tay sai",
+              },
+              {
+                key: "C",
+                text: "đã giải quyết được vấn đề cơ bản của một cuộc cách mạng xã hội",
+              },
+              {
+                key: "D",
+                text: "đây là hình thức chính quyền nhà nước giống các Xô viết ở nước Nga",
+              },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387491",
+            source: "Chương 1",
+            text: "Hội nghị lần thứ nhất Ban chấp hành Trung ương 10/1930 do ai chủ trì?",
+            answers: [
+              { key: "A", text: "Nguyễn Ái Quốc" },
+              { key: "B", text: "Hà Huy Tập" },
+              { key: "C", text: "Trường Chinh" },
+              { key: "D", text: "Trần Phú" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448387492",
+            source: "Chương 1",
+            text: "Ý nghĩa quan trọng của phong trào cách mạng 1930 - 1931 ở Việt Nam là…",
+            answers: [
+              {
+                key: "A",
+                text: "chứng minh trong thực tế khả năng lãnh đạo của chính đảng vô sản",
+              },
+              {
+                key: "B",
+                text: "tạo tiền đề trực tiếp cho Tổng khởi nghĩa tháng Tám năm 1945",
+              },
+              {
+                key: "C",
+                text: "hình thành khối liên minh công nông binh cho cách mạng Việt Nam",
+              },
+              {
+                key: "D",
+                text: "Đảng Cộng sản Việt Nam được công nhận là một bộ phận độc lập",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387493",
+            source: "Chương 1",
+            text: "Phong trào cách mạng 1930 - 1931 phát triển mạnh nhất là ở đâu?",
+            answers: [
+              { key: "A", text: "Nghệ An và Hà Tĩnh" },
+              { key: "B", text: "Thanh Hóa và Nghệ An" },
+              { key: "C", text: "Hà Tĩnh và Quảng Bình" },
+              { key: "D", text: "Nam Định và Hải Dương" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448387494",
+            source: "Chương 1",
+            text: "Khẩu hiệu: “Đả đảo chủ nghĩa đế quốc! Đả đảo phong kiến” của nhân dân Việt Nam phong trào cách mạng 1930 - 1931 thể hiện mục tiêu đấu tranh về…",
+            answers: [
+              { key: "A", text: "xã hội" },
+              { key: "B", text: "văn hóa" },
+              { key: "C", text: "chính trị" },
+              { key: "D", text: "kinh tế" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448387495",
+            source: "Chương 1",
+            text: "Hội nghị lần thứ nhất Ban Chấp hành Trung ương lâm thời Đảng Cộng sản Việt Nam (10/1930) đã cử ai làm Tổng bí thư?",
+            answers: [
+              { key: "A", text: "Lê Hồng Phong" },
+              { key: "B", text: "Ngô Gia Tự" },
+              { key: "C", text: "Trần Phú" },
+              { key: "D", text: "Nguyễn Văn Cừ" },
+            ],
+            correct: "C",
+          },
+        ],
+        chuong2: [
+          {
+            id: "448408914",
+            source: "Chương 2",
+            text: "Chủ tịch Hồ Chí Minh ra Lời kêu gọi toàn quốc kháng chiến vào thời điểm nào?",
+            answers: [
+              { key: "A", text: "Đêm ngày 18-9-1946" },
+              { key: "B", text: "Đêm ngày 19-12-1946" },
+              { key: "C", text: "Ngày 20-12-1946" },
+              { key: "D", text: "Ngày 2 – 9 - 1945" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448408915",
+            source: "Chương 2",
+            text: "Quân đội Đồng minh nào dưới danh nghĩa giải giáp quân Nhật kéo vào Việt Nam từ vĩ tuyến 16 trở ra Bắc?",
+            answers: [
+              { key: "A", text: "Pháp" },
+              { key: "B", text: "Anh" },
+              { key: "C", text: "Trung Hoa Dân Quốc" },
+              { key: "D", text: "Mĩ" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448408916",
+            source: "Chương 2",
+            text: "Hội nghị Ban thường vụ Trung Đảng họp mở rộng quyết định phát động cuộc kháng chiến toàn quốc họp vào thời gian nào?",
+            answers: [
+              { key: "A", text: "Ngày 18-12-1946" },
+              { key: "B", text: "Ngày 19-12-1946" },
+              { key: "C", text: "Ngày 20-12-1946" },
+              { key: "D", text: "Ngày 22-12-1946" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448408917",
+            source: "Chương 2",
+            text: "Quân đội Đồng minh nào dưới đây dưới danh nghĩa giải giáp quân Nhật kéo vào nước Việt Nam từ vĩ tuyến 16 trở vào Nam?",
+            answers: [
+              { key: "A", text: "Pháp" },
+              { key: "B", text: "Anh" },
+              { key: "C", text: "Trung Hoa Dân Quốc" },
+              { key: "D", text: "Mĩ." },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448408918",
+            source: "Chương 2",
+            text: "Cuộc tổng giao chiến lịch sử mở đầu của kháng chiến chống thực dân Pháp của quân và dân ta ở Hà Nội đã diễn ra trong…?",
+            answers: [
+              { key: "A", text: "60 ngày đêm" },
+              { key: "B", text: "30 ngày đêm" },
+              { key: "C", text: "12 ngày đêm" },
+              { key: "D", text: "90 ngày đêm" },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448408919",
+            source: "Chương 2",
+            text: "Sau Cách mạng tháng Tám năm 1945, ngân sách nhà nước trống rỗng, kho bạc của nhà nước Việt Nam còn khoảng…",
+            answers: [
+              { key: "A", text: "hơn 3,1 triệu đồng" },
+              { key: "B", text: "hơn 1,2 triệu đồng" },
+              { key: "C", text: "hơn 2,1 triệu đồng" },
+              { key: "D", text: "hơn 2,2 triệu đồng" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448408920",
+            source: "Chương 2",
+            text: "Những văn kiện nào dưới đây được coi như Cương lĩnh kháng chiến của Đảng ta:",
+            answers: [
+              {
+                key: "A",
+                text: "Lời kêu gọi toàn quốc kháng chiến của chủ tịch Hồ Chí Minh",
+              },
+              {
+                key: "B",
+                text: "Chỉ thị toàn dân kháng chiến của Trung ương Đảng",
+              },
+              {
+                key: "C",
+                text: 'Tác phẩm "Kháng chiến nhất định thắng lợi" của Tổng Bí thư Trường Chinh',
+              },
+              { key: "D", text: "Cả A, B, C" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448408921",
+            source: "Chương 2",
+            text: "Sau cách mạng tháng Tám năm 1945, khó khăn lớn nhất đưa nước Việt Nam vào tình thế “ngàn cân treo sợi tóc” là gì?",
+            answers: [
+              { key: "A", text: "Khó khăn về thù trong, giặc ngoài" },
+              { key: "B", text: "Hơn 90% dân số không biết chữ" },
+              {
+                key: "C",
+                text: "Ngân sách nhà nước trống rỗng, tài chính nước Việt Nam rối loạn",
+              },
+              {
+                key: "D",
+                text: "Nạn đói, nạn dốt đe dọa nghiêm trọng đến nhân dân Việt Nam",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448408922",
+            source: "Chương 2",
+            text: "Nhiệm vụ hàng đầu của nhân dân ta trong quá trình kháng chiến chống thực dân Pháp:",
+            answers: [
+              { key: "A", text: "Chống đế quốc giành độc lập dân tộc" },
+              {
+                key: "B",
+                text: "Xoá bỏ những tàn tích phong kiến đem lại ruộng đất cho nông dân",
+              },
+              { key: "C", text: "Xây dựng chế độ dân chủ mới" },
+              { key: "D", text: "Cả ba phương án trên" },
+            ],
+            correct: "A",
+          },
+        ],
+        chuong3: [
+          {
+            id: "448409989",
+            source: "Chương 3",
+            text: "Chọn phương án trả lời đúng nhất: Các thành phần kinh tế dựa trên chế độ công hữu ở Việt Nam là?",
+            answers: [
+              {
+                key: "A",
+                text: "Kinh tế tư nhân và kinh tế có vốn đầu tư nước ngoài",
+              },
+              { key: "B", text: "Kinh tế nhà nước và kinh tế tư nhân" },
+              { key: "C", text: "Kinh tế nhà nước và kinh tế tập thể" },
+              { key: "D", text: "Kinh tế tập thể và kinh tế tư nhân" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448409990",
+            source: "Chương 3",
+            text: "Chọn phương án trả lời đúng nhất: Kinh tế thị trường định hướng XHCN ở Việt Nam là nền kinh tế…?",
+            answers: [
+              {
+                key: "A",
+                text: "Có nhiều hình thức sở hữu, nhiều thành phần kinh tế",
+              },
+              {
+                key: "B",
+                text: "Có nhiều hình thức sở hữu, một thành phần kinh tế",
+              },
+              {
+                key: "C",
+                text: "Có một hình thức sở hữu, nhiều thành phần kinh tế",
+              },
+              {
+                key: "D",
+                text: "Có nhiều hình thức sở hữu, một thành phần kinh tế",
+              },
+            ],
+            correct: "A",
+          },
+          {
+            id: "448409991",
+            source: "Chương 3",
+            text: "Từ khi nào Đảng ta không dùng khái niệm “hệ thống chuyên chính vô sản”?",
+            answers: [
+              { key: "A", text: "Từ Đại hội VI" },
+              { key: "B", text: "Từ Hội nghị Trung ương 6, khoá VI" },
+              { key: "C", text: "Từ Đại hội VII" },
+              { key: "D", text: "Từ Đại hội VIII" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448409992",
+            source: "Chương 3",
+            text: "Việt Nam gia nhập Hội đồng Tương trợ kinh tế (khối SEV) vào năm nào?",
+            answers: [
+              { key: "A", text: "Năm 1975" },
+              { key: "B", text: "Năm 1976" },
+              { key: "C", text: "Năm 1977" },
+              { key: "D", text: "Năm 1978" },
+            ],
+            correct: "D",
+          },
+          {
+            id: "448409993",
+            source: "Chương 3",
+            text: "Việt Nam tiếp nhận ghế thành viên tại Liên Hợp quốc vào năm nào?",
+            answers: [
+              { key: "A", text: "Năm 1975" },
+              { key: "B", text: "Năm 1976" },
+              { key: "C", text: "Năm 1977" },
+              { key: "D", text: "Năm 1978" },
+            ],
+            correct: "C",
+          },
+          {
+            id: "448409994",
+            source: "Chương 3",
+            text: "“Đề cương văn hoá Việt Nam” do đồng chí Trường Chinh soạn thảo được Ban Thường vụ Trung ương Đảng thông qua vào năm nào?",
+            answers: [
+              { key: "A", text: "Năm 1941" },
+              { key: "B", text: "Năm 1943" },
+              { key: "C", text: "Năm 1944" },
+              { key: "D", text: "Năm 1945" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448409995",
+            source: "Chương 3",
+            text: "Khái niệm “hệ thống chính trị” lần đầu tiên được Đảng ta sử dụng khi nào?",
+            answers: [
+              { key: "A", text: "Tại Đại hội VI" },
+              { key: "B", text: "Tại Hội nghị Trung ương 6, khoá VI" },
+              { key: "C", text: "Tại Đại hội VII" },
+              { key: "D", text: "Tại Đại hội VIII" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448409996",
+            source: "Chương 3",
+            text: "Chọn phương án trả lời đúng nhất: Thành phần kinh tế tư nhân dựa trên chế độ sở hữu nào?",
+            answers: [
+              { key: "A", text: "Công hữu" },
+              { key: "B", text: "Tư nhân" },
+              { key: "C", text: "Tập thể" },
+              { key: "D", text: "Hỗn hợp" },
+            ],
+            correct: "B",
+          },
+          {
+            id: "448409997",
+            source: "Chương 3",
+            text: "Thành phần kinh tế giữ vai trò chủ đạo trong nền kinh tế thị trường định hướng XHCN ở Việt Nam là …?",
+            answers: [
+              { key: "A", text: "Kinh tế nhà nước" },
+              { key: "B", text: "Kinh tế tư nhân" },
+              { key: "C", text: "Kinh tế tập thể" },
+              { key: "D", text: "Kinh tế có vốn đầu tư nước ngoài" },
+            ],
+            correct: "A",
+          },
+        ],
+        lsd_lms: [
+          {
+            id: "448834461",
+            source: "LSD_LMS",
+            text: "Hội nghị lần thứ 24 Ban Chấp hành Trung ương Đảng Khoá III (9-1975) đã đề ra nhiệm vụ gì?:",
+            answers: [
+              {
+                key: "A",
+                text: "Hoàn thành thống nhất đất nước về mặt nhà nước",
+              },
+              {
+                key: "B",
+                text: "Xây dựng chủ nghĩa xã hội ở hai miền Bắc - Nam",
+              },
+              { key: "C", text: "Hiệp thương chính trị thống nhất đất nước" },
+              {
+                key: "D",
+                text: "Hoàn thành công cuộc khôi phục và phát triển kinh tế sau chiến tranh",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834469",
+            source: "LSD_LMS",
+            text: "Đảng chủ trương bắt đầu tiến hành công nghiệp hóa, hiện đại hóa đất nước trong nhiệm kỳ Đại hội nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đại hội đại biểu toàn quốc lần thứ VII của Đảng (1991)",
+              },
+              {
+                key: "B",
+                text: "Đại hội đại biểu toàn quốc lần thứ IX của Đảng (2001)",
+              },
+              {
+                key: "C",
+                text: "Đại hội đại biểu toàn quốc lần thứ VI của Đảng (1986)",
+              },
+              {
+                key: "D",
+                text: "Đại hội đại biểu toàn quốc lần thứ VIII của Đảng (1996)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834464",
+            source: "LSD_LMS",
+            text: "Đại hội đại biểu toàn quốc lần thứ V của Đảng (1982) xác định chặng đường trước mắt là giữ ổn định, tiến lên cải thiện một bước đời sống vật chất và tinh thần của nhân dân. Chặng đường đó là khoảng thời gian nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Thời kỳ 5 năm 1981-1985 và kéo dài đến những năm 1995",
+              },
+              {
+                key: "B",
+                text: "Thời kỳ 5 năm 1981-1985 và kéo dài đến những năm 1990",
+              },
+              { key: "C", text: "Thời kỳ 5 năm 1981-1985" },
+              { key: "D", text: "Trong 20 năm đầu xây dựng CNXH" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834480",
+            source: "LSD_LMS",
+            text: "Tại sao Đảng xác định tiến hành Công nghiệp hóa - hiện đại hóa đất nước bắt đầu từ năm 1996, tìm đáp án đúng nhất?:",
+            answers: [
+              {
+                key: "A",
+                text: "Do Việt Nam đã trải qua 10 năm đổi mới đất nước",
+              },
+              {
+                key: "B",
+                text: "Do kế hoạch đã đặt ra từ nhiệm kỳ Đại hội trước",
+              },
+              {
+                key: "C",
+                text: "Do Việt Nam đã thoát khỏi tình trạng khủng hoảng về kinh tế - xã hội",
+              },
+              {
+                key: "D",
+                text: "Do Việt Nam đã đạt nhiều thành tựu quan trọng quá trình công nghiệp hóa",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834410",
+            source: "LSD_LMS",
+            text: "Nội dung nào dưới đây thể hiện đúng vai trò của phong trào “vô sản hóa”?:",
+            answers: [
+              {
+                key: "A",
+                text: "Truyền bá lý luận cách mạng, thúc đẩy phong trào công nhân phát triển",
+              },
+              {
+                key: "B",
+                text: "Đánh dấu sự trưởng thành lớn mạnh của giai cấp công nhân",
+              },
+              {
+                key: "C",
+                text: "Thúc đẩy công nhân trở thành giai cấp lãnh đạo",
+              },
+              {
+                key: "D",
+                text: "Đưa phong trào công nhân từ tự phát chuyển sang tự giác",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834403",
+            source: "LSD_LMS",
+            text: "“Hội Việt Nam cách mạng thanh niên” đã phân hóa thành những Đảng nào sau đây?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đông Dương cộng sản Đảng và An Nam cộng sản Đảng và Đông Dương cộng sản liên đoàn",
+              },
+              {
+                key: "B",
+                text: "Đông Dương cộng sản Đảng và An Nam cộng sản Đảng",
+              },
+              {
+                key: "C",
+                text: "Đông Dương cộng sản liên đoàn và An Nam cộng sản Đảng",
+              },
+              {
+                key: "D",
+                text: "Đảng cộng sản Đông dương và An Nam cộng sản Đảng",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834483",
+            source: "LSD_LMS",
+            text: "Nội dung nào sau đây không thuộc Chủ đề của Đại hội đại biểu toàn quốc lần thứ X (2006) của Đảng?:",
+            answers: [
+              { key: "A", text: "Phát huy sức mạnh toàn dân tộc" },
+              {
+                key: "B",
+                text: "Đẩy mạnh toàn diện công cuộc đổi mới, sớm đưa nước ta ra khỏi tình trạng kém phát triển",
+              },
+              {
+                key: "C",
+                text: "Nâng cao năng lực lãnh đạo và sức chiến đấu của Đảng",
+              },
+              {
+                key: "D",
+                text: "Đẩy mạnh toàn diện công cuộc đổi mới, tạo nền tảng để đến năm 2020 nước ta cơ bản trở thành nước công nghiệp theo hướng hiện đại",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834486",
+            source: "LSD_LMS",
+            text: "Tại Đại hội lần thứ XIII (2021), Đảng xác định mục tiêu phấn đấu của Việt Nam, đến năm 2025, kỷ niệm 50 năm giải phóng hoàn toàn miền Nam, thống nhất đất nước là gì?:",
+            answers: [
+              { key: "A", text: "Trở thành nước phát triển, thu nhập cao" },
+              {
+                key: "B",
+                text: "Là nước đang phát triển, có công nghiệp theo hướng hiện đại, vượt qua mức thu nhập trung bình thấp",
+              },
+              {
+                key: "C",
+                text: "Là nước đang phát triển, có công nghiệp hiện đại, thu nhập trung bình cao",
+              },
+              { key: "D", text: "Là nước đang phát triển, có thu nhập cao" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834462",
+            source: "LSD_LMS",
+            text: "Đâu là mục tiêu cơ bản và cấp bách của cách mạng Việt Nam sau thắng lợi cuộc kháng chiến chống Mỹ năm 1975?:",
+            answers: [
+              {
+                key: "A",
+                text: "Xây dựng nền kinh tế thị trường định hướng XHCN",
+              },
+              {
+                key: "B",
+                text: "Bảo đảm công cuộc xây dựng CNXH đúng định hướng",
+              },
+              { key: "C", text: "Bảo đảm nhu cầu đời sống của nhân dân" },
+              { key: "D", text: "Bảo đảm nền kinh tế vững chắc" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834409",
+            source: "LSD_LMS",
+            text: "Thành phần tham gia chủ yếu của “Hội Việt Nam Cách mạng thanh niên” từ năm 1925-1927 là lực lượng nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Học sinh, sinh viên, trí thức Việt Nam yêu nước",
+              },
+              { key: "B", text: "Giai cấp công nhân, nông dân Việt Nam" },
+              {
+                key: "C",
+                text: "Học sinh, sinh viên, viên chức, trí thức Việt Nam",
+              },
+              { key: "D", text: "Giai cấp công nhân, trí thức Việt Nam" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834416",
+            source: "LSD_LMS",
+            text: "Chủ trương phát động Tổng khởi nghĩa giành chính quyền năm 1945 được Đảng đưa ra trong Hội nghị Trung ương nào sau đây?:",
+            answers: [
+              {
+                key: "A",
+                text: "Hội nghị lần thứ VIII của Ban Chấp hành Trung ương Đảng (5/1941)",
+              },
+              { key: "B", text: "Hội nghị toàn quốc của Đảng (8/1945)" },
+              {
+                key: "C",
+                text: "Hội nghị mở rộng của Ban thường vụ Trung ương Đảng (9/1945)",
+              },
+              { key: "D", text: "Hội nghị Quân sự cách mạng Bắc Kỳ (4/1945)" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834457",
+            source: "LSD_LMS",
+            text: "Chính phủ cách mạng lâm thời Cộng hòa miền Nam Việt Nam được thành lập năm nào?:",
+            answers: [
+              { key: "A", text: "1970" },
+              { key: "B", text: "1974" },
+              { key: "C", text: "1969" },
+              { key: "D", text: "1972" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834454",
+            source: "LSD_LMS",
+            text: "Cuộc tổng tiến công và nổi dậy mùa Xuân năm 1975 bắt đầu bằng chiến dịch nào?:",
+            answers: [
+              { key: "A", text: "Chiến dịch đường 9 - Nam Lào" },
+              { key: "B", text: "Chiến dịch đường số 14" },
+              { key: "C", text: "Chiến dịch Tây Nguyên" },
+              { key: "D", text: "Chiến dịch Huế - Đà Nẵng" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834455",
+            source: "LSD_LMS",
+            text: "Con đường vận tải trên bộ (đường mòn Hồ Chí Minh) còn có tên gọi là gì?:",
+            answers: [
+              { key: "A", text: "Đường 559" },
+              { key: "B", text: "Đường 19" },
+              { key: "C", text: "Đường 759" },
+              { key: "D", text: "Đường 1" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834413",
+            source: "LSD_LMS",
+            text: "Văn kiện nào của Đảng nhấn mạnh “Vấn đề thổ địa là cái cốt của cách mạng tư sản dân quyền”?:",
+            answers: [
+              { key: "A", text: "Luận cương chính trị (10/1930)" },
+              {
+                key: "B",
+                text: "Chính cương vắn tắt, Sách lược vắn tắt (2/1930)",
+              },
+              { key: "C", text: "Đường Cách mệnh (1927)" },
+              {
+                key: "D",
+                text: "Chỉ thị thành lập Hội phản đế Đồng minh (11/1930)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834485",
+            source: "LSD_LMS",
+            text: "Đại hội đại biểu toàn quốc lần thứ mấy của Đảng xác định vai trò của kinh tế tư nhân “là một trong những động lực của nền kinh tế”?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đại hội đại biểu toàn quốc lần thứ XII (2016) của Đảng",
+              },
+              {
+                key: "B",
+                text: "Đại hội đại biểu toàn quốc lần thứ XI (2011) của Đảng",
+              },
+              {
+                key: "C",
+                text: "Đại hội đại biểu toàn quốc lần thứ X (2006) của Đảng",
+              },
+              {
+                key: "D",
+                text: "Đại hội đại biểu toàn quốc lần thứ IX (2001) của Đảng",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834458",
+            source: "LSD_LMS",
+            text: "Hội nghị 18 TU Đảng (1/1970) và Hội nghị Bộ chính trị (6/1970) đề chủ trương mới nhằm chống lại chiến lược “Việt Nam hóa chiến tranh”, hướng tiến công chính là vùng nào?:",
+            answers: [
+              { key: "A", text: "Lấy đô thị làm hướng chính" },
+              { key: "B", text: "Lấy nông thôn làm hướng chính" },
+              {
+                key: "C",
+                text: "Tập trung vào vị trí trọng yếu làm hướng chính",
+              },
+              { key: "D", text: "Tập trung dánh chiếm  vùng miền núi" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834426",
+            source: "LSD_LMS",
+            text: "Để khẳng định địa vị pháp lý của Nhà nước Việt Nam Dân chủ Cộng hoà, năm 1946, Đảng đã chủ trương tổ chức hoạt động nào dưới đây?:",
+            answers: [
+              {
+                key: "A",
+                text: "Tổng tuyển cử trong cả nước theo hình thức phổ thông đầu phiếu",
+              },
+              { key: "B", text: "Đưa Đảng ra hoạt động công khai" },
+              {
+                key: "C",
+                text: "Xây dựng các trụ sở hành chính ở các khu tự do",
+              },
+              {
+                key: "D",
+                text: "Kêu gọi nhân dân đề cử người tài ra giúp nước",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834436",
+            source: "LSD_LMS",
+            text: "Trong “Chính cương của Đảng Lao động Việt Nam”, Đảng đã phát triền và hoàn thiện nhận thức về lực lượng cách mạng không chỉ là công nhân, nông dân mà còn các lực lượng yêu nước khác. Các lực lượng đó được gọi là gì?:",
+            answers: [
+              { key: "A", text: "Nhân dân" },
+              { key: "B", text: "Dân tộc" },
+              { key: "C", text: "Vô sản" },
+              { key: "D", text: "Dân chủ" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834494",
+            source: "LSD_LMS",
+            text: "Tìm đáp án đúng nhất về một trong tám đặc trưng của CNXH được thể hiện trong Cương lĩnh năm 2011 của Đảng?:",
+            answers: [
+              {
+                key: "A",
+                text: "Con người được giải phóng khỏi áp bức, bóc lột, bất công, làm theo năng lực, hưởng theo nhu cầu, có cuộc sống ấm no, tự do, hạnh phúc, có điều kiện phát triển toàn diện cá nhân",
+              },
+              {
+                key: "B",
+                text: "Con người có cuộc sống ấm no, tự do, hạnh phúc, có điều kiện phát triển toàn diện",
+              },
+              {
+                key: "C",
+                text: "Con người được giải phóng khỏi áp bức, bóc lột, bất công, làm theo năng lực, hưởng theo lao động, có cuộc sống ấm no, tự do, hạnh phúc, có điều kiện phát triển toàn diện cá nhân",
+              },
+              {
+                key: "D",
+                text: "Con người có cuộc sống ấm no, tự do, hạnh phúc, được phát triển theo khả năng và nhu cầu của mình",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834405",
+            source: "LSD_LMS",
+            text: "Các tổ chức nào dưới đây đã tham dự Hội nghị hợp nhất các tổ chức cộng sản do Nguyễn Ái Quốc chủ trì năm 1930?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đông Dương cộng sản Đảng và An Nam cộng sản Đảng và Đông Dương cộng sản liên đoàn",
+              },
+              {
+                key: "B",
+                text: "Đông Dương cộng sản Đảng và An Nam cộng sản Đảng",
+              },
+              {
+                key: "C",
+                text: "Đông Dương cộng sản liên đoàn và An Nam cộng sản Đảng",
+              },
+              {
+                key: "D",
+                text: "Đảng cộng sản Đông dương và An Nam cộng sản Đảng",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834470",
+            source: "LSD_LMS",
+            text: "Xây dựng nền dân chủ XHCN, đảm bảo quyền lực thuộc về nhân dân được thể hiện trong lĩnh vực nào của đường lối đổi mới?:",
+            answers: [
+              { key: "A", text: "Văn hóa" },
+              { key: "B", text: "Kinh tế" },
+              { key: "C", text: "Chính trị" },
+              { key: "D", text: "Xã hội" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834423",
+            source: "LSD_LMS",
+            text: "Nhận định nào sau đây phản ánh đầy đủ ý nghĩa quan trọng của cách mạng Tháng Tám năm 1945 đối với cách mạng thế giới?:",
+            answers: [
+              {
+                key: "A",
+                text: "Cách mạng giải phóng dân tộc lần đầu tiên giành thắng lợi ở một nước thuộc địa, đã đột phá một khâu quan trọng trong hệ thống thuộc địa của chủ nghĩa đế quốc, mở đầu thời kỳ suy sụp và tan rã của chủ nghĩa thực dân cũ",
+              },
+              {
+                key: "B",
+                text: "Cách mạng giải phóng dân tộc lần đầu tiên giành thắng lợi ở một nước nhỏ bé, đã phá tan xiềng xích của chủ nghĩa đế quốc, mở đầu thời kỳ suy sụp và tan rã của chủ nghĩa thực dân mới",
+              },
+              {
+                key: "C",
+                text: "Cách mạng giải phóng dân tộc lần đầu tiên giành thắng lợi ở một nước thuộc địa, đã đột phá một khâu quan trọng trong hệ thống thuộc địa của chủ nghĩa đế quốc, mở đầu thời kỳ suy sụp và tan rã của chủ nghĩa thực dân mới",
+              },
+              {
+                key: "D",
+                text: "Cách mạng vô sản lần đầu tiên giành thắng lợi ở một nước thuộc địa, đã đột phá một khâu quan trọng trong hệ thống thuộc địa của chủ nghĩa đế quốc, mở đầu thời kỳ suy sụp và tan rã của chủ nghĩa thực dân cũ",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834445",
+            source: "LSD_LMS",
+            text: "Tháng 1-1961 và tháng 2-1962, các Hội nghị của Bộ Chính trị đã xác định phương hướng nào sau đây khi đối phó với “chiến lược chiến tranh đặc biệt” của Mỹ?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đẩy mạnh chiến tranh đến thắng lợi cuối cùng",
+              },
+              {
+                key: "B",
+                text: "Chuyển sang thế phòng ngự chờ cơ hội thuận lợi để tiến công",
+              },
+              {
+                key: "C",
+                text: "Giữ vững thế chiến lược tiến công của cách mạng miền Nam",
+              },
+              {
+                key: "D",
+                text: "Tạm thời thực hiện kế hoạch cầm cự, tiếp tục phát triển lực lượng",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834432",
+            source: "LSD_LMS",
+            text: "Sự kiện trực tiếp nào đưa đến quyết định toàn quốc kháng chiến của Đảng và Chính phủ Việt Nam?:",
+            answers: [
+              { key: "A", text: "Pháp tấn công Nam Bộ và Nam Trung bộ" },
+              { key: "B", text: "Pháp chiếm Hải Phòng và Lạng Sơn" },
+              { key: "C", text: "Hội nghị Fontainebleau thất bại" },
+              {
+                key: "D",
+                text: "Pháp gửi tối hậu thư buộc Việt Nam giao quyền kiểm soát thủ đô Hà Nội",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834477",
+            source: "LSD_LMS",
+            text: "Hội nghị nào của Ban chấp hành Trung ương Đảng khóa VIII đã thông qua Nghị quyết về “Định hướng chiến lược phát triển giáo dục - đào tạo trong thời kỳ công nghiệp hoá, hiện đại hoá và nhiệm vụ đến nǎm 2000”?:",
+            answers: [
+              {
+                key: "A",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 2 (12/1996)",
+              },
+              {
+                key: "B",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 7 (8/1999)",
+              },
+              {
+                key: "C",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 3 (6/1997)",
+              },
+              {
+                key: "D",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 5 (7/1998)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834489",
+            source: "LSD_LMS",
+            text: "Trong nhiệm kỳ Đại hội đại biểu toàn quốc lần thứ X của Đảng (2006), Nghị quyết nào của Đảng bàn về “Chiến lược biển Việt Nam đến năm 2020”?:",
+            answers: [
+              {
+                key: "A",
+                text: "Nghị quyết số 09-NQ/TW ngày 9/2/2007- Hội nghị Trung ương lần thứ 4  (2-2007)",
+              },
+              {
+                key: "B",
+                text: "Nghị quyết số 21-NQ/TW -Hội nghị Trung ương lần thứ 6  (1-2008)",
+              },
+              {
+                key: "C",
+                text: "Nghị quyết số 04-NQ/TW - Hội nghị Trung ương lần thứ 3  (8-2006)",
+              },
+              {
+                key: "D",
+                text: "Nghị quyết số 26-NQ/TW - Hội nghị Trung ương lần thứ 7 (8/2008)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834419",
+            source: "LSD_LMS",
+            text: 'Trong chỉ thị "Nhật-Pháp bắn nhau và hành động của chúng ta", Trung ương Đảng xác định lực lượng nào là kẻ thù của nhân dân Đông Dương lúc đó?:',
+            answers: [
+              { key: "A", text: "Thực dân Pháp và phát xít Nhật" },
+              { key: "B", text: "Các thế lực phong kiến tay sai" },
+              { key: "C", text: "Thực dân Pháp" },
+              { key: "D", text: "Phát xít Nhật" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834404",
+            source: "LSD_LMS",
+            text: "Tác phẩm nào dưới đây của Nguyễn Ái Quốc đã vạch trần tội ác của thực dân Pháp trong quá trình chuẩn bị về tư tưởng, chính trị cho việc thành lập Đảng?:",
+            answers: [
+              { key: "A", text: "“Đường Kách mệnh”" },
+              { key: "B", text: "“Yêu sách của nhân dân An Nam”" },
+              { key: "C", text: "“Bản án chế độ thực dân Pháp”" },
+              { key: "D", text: "Cương lĩnh đầu tiên của Đảng" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834492",
+            source: "LSD_LMS",
+            text: "Nghị quyết số 20-NQ/TW năm 2012 Hội nghị Trung ương 6, khóa XI đã xác định lĩnh vực nào sau đây cần được ưu tiên tập trung đầu tư trước một bước trong hoạt động của các ngành, các cấp?:",
+            answers: [
+              { key: "A", text: "Giáo dục - đào tạo" },
+              { key: "B", text: "Văn hóa - xã hội" },
+              { key: "C", text: "Khoa học và công nghệ" },
+              { key: "D", text: "Y tế" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834434",
+            source: "LSD_LMS",
+            text: "Để giữ vững thành quả cách mạng 1945, Đảng xác định thực hiện hai nhiệm vụ chiến lược gì?:",
+            answers: [
+              {
+                key: "A",
+                text: "Quyết tâm kháng chiến chống Pháp xâm lược và trừng trị bọn nội phản",
+              },
+              {
+                key: "B",
+                text: "Củng cố, bảo vệ chính quyền cách mạng và ra sức xây dựng chế độ mới",
+              },
+              {
+                key: "C",
+                text: "Thành lập chính phủ chính thức và thông qua Hiến pháp mới",
+              },
+              {
+                key: "D",
+                text: "Thực hiện nền giáo dục mới và giải quyết nạn đói",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834478",
+            source: "LSD_LMS",
+            text: "Đại hội nào của Đảng đã đưa ra phương châm đối ngoại “Việt Nam sẵn sàng là bạn, là đối tác tin cậy của các nước trong cộng đồng quốc tế, phấn đấu vì hòa bình, độc lập, phát triển”?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đại hội đại biểu toàn quốc lần thứ VII (1991) của Đảng",
+              },
+              {
+                key: "B",
+                text: "Đại hội đại biểu toàn quốc lần thứ VIII (1996) của Đảng",
+              },
+              {
+                key: "C",
+                text: "Đại hội đại biểu toàn quốc lần thứ IX (2001) của Đảng",
+              },
+              {
+                key: "D",
+                text: "Đại hội đại biểu toàn quốc lần thứ X (2006) của Đảng",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834420",
+            source: "LSD_LMS",
+            text: "Chủ trương chuyển hướng chỉ đạo chiến lược cách mạng của Đảng được bắt đầu từ Hội nghị Trung ương nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 2 (7/1936)",
+              },
+              {
+                key: "B",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 6  (11/1939)",
+              },
+              {
+                key: "C",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 7 (11/1940)",
+              },
+              {
+                key: "D",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 8 (5/1941)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834472",
+            source: "LSD_LMS",
+            text: "Việt Nam trở thành thành viên đầy đủ của Hiệp hội các quốc gia Đông Nam Á năm nào?:",
+            answers: [
+              { key: "A", text: "1997" },
+              { key: "B", text: "1995" },
+              { key: "C", text: "1994" },
+              { key: "D", text: "1996" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834437",
+            source: "LSD_LMS",
+            text: "Trong “Chính cương của Đảng Lao động Việt Nam”, Đảng có nhận thức mới về con đường cách mạng Việt Nam như thế nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Cách mạng dân tộc dân chủ nhân dân tiến lên cách mạng XHCN",
+              },
+              {
+                key: "B",
+                text: "Cách mạng dân tộc tiến lên xây dựng CNXH bỏ qua thời kỳ phát triển TBCN",
+              },
+              { key: "C", text: "Cách mạng vô sản tiến lên cách mạng XHCN" },
+              {
+                key: "D",
+                text: "Cách mạng giải phóng dân tộc, giải phóng giai cấp",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834491",
+            source: "LSD_LMS",
+            text: "Trong bản “Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH (bổ sung, phát triển năm 2011”, Đảng chủ trương xây dựng Nhà nước như thế nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Có Nhà nước dân chủ của nhân dân, do nhân dân, vì nhân dân…",
+              },
+              {
+                key: "B",
+                text: "Có Nhà nước của nhân dân, do nhân dân, vì nhân dân…",
+              },
+              {
+                key: "C",
+                text: "Có Nhà nước pháp quyền của nhân dân, do nhân dân, vì nhân dân…",
+              },
+              {
+                key: "D",
+                text: "Có Nhà nước pháp quyền XHCN của nhân dân, do nhân dân, vì nhân dân…",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834442",
+            source: "LSD_LMS",
+            text: "Sau khi miền Bắc giải phóng hoàn toàn (1955), Đảng chủ trương xây dựng miền Bắc như thế nào?:",
+            answers: [
+              { key: "A", text: "Xây dựng nền kinh tế thị trường ở miền Bắc" },
+              {
+                key: "B",
+                text: "Tiếp tục thực hiện cách mạng dân tộc dân chủ nhân dân",
+              },
+              { key: "C", text: "Đưa miền Bắc quá độ lên CNXH" },
+              { key: "D", text: "Xây dựng kinh tế kiểu thời chiến" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834463",
+            source: "LSD_LMS",
+            text: "Đại hội đại biểu toàn quốc lần thứ IV của Đảng (12/1976) xác định đẩy mạnh công nghiệp hóa bằng cách ưu tiên phát triển ngành kinh tế gì?:",
+            answers: [
+              { key: "A", text: "Công nghiệp nặng" },
+              { key: "B", text: "Nông nghiệp" },
+              { key: "C", text: "Dịch vụ" },
+              { key: "D", text: "Cả 3 đáp án" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834453",
+            source: "LSD_LMS",
+            text: "Quá trình đàm phán kí kết hiệp định Pari về chấm dứt chiến tranh, lập lại hòa bình ở Việt Nam diễn ra trong thời gian nào sau đây?:",
+            answers: [
+              { key: "A", text: "Từ năm 1970 đến tháng 1/1971" },
+              { key: "B", text: "Từ tháng 5/1968 đến tháng 1/1973" },
+              { key: "C", text: "Từ tháng 4/1972 đến tháng 1/1973" },
+              { key: "D", text: "Tháng 1/1973" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834441",
+            source: "LSD_LMS",
+            text: "Quân viễn chinh Pháp rút khỏi miền Bắc nước ta vào thời gian nào?:",
+            answers: [
+              { key: "A", text: "Ngày 16/5/1955" },
+              { key: "B", text: "Ngày 15/6/1955" },
+              { key: "C", text: "Ngày 10/10/1954" },
+              { key: "D", text: "Ngày 15/5/1955" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834466",
+            source: "LSD_LMS",
+            text: "Lần đầu tiên Đảng xác định một trong những đặc trưng của CNXH là“Xây dựng nền văn hóa tiên tiến, đậm đà bản sắc dân tộc” tại Đại hội Đảng nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đại hội đại biểu toàn quốc lần thứ IX của Đảng (2001)",
+              },
+              {
+                key: "B",
+                text: "Đại hội đại biểu toàn quốc lần thứ VIII của Đảng (1996)",
+              },
+              {
+                key: "C",
+                text: "Đại hội đại biểu toàn quốc lần thứ VII của Đảng (1991)",
+              },
+              {
+                key: "D",
+                text: "Đại hội đại biểu toàn quốc lần thứ VI của Đảng (1986)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834468",
+            source: "LSD_LMS",
+            text: "Chủ trương lấy “chủ nghĩa Mác Lênin và tư tưởng Hồ Chí Minh là nền tảng tư tưởng, kim chỉ nam cho hành động…” được thông qua lần đầu tiên tại Đại hội Đảng lần thứ mấy?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đại hội đại biểu toàn quốc lần thứ IX của Đảng (2001)",
+              },
+              {
+                key: "B",
+                text: "Đại hội đại biểu toàn quốc lần thứ XI của Đảng (2011)",
+              },
+              {
+                key: "C",
+                text: "Đại hội đại biểu toàn quốc lần thứ VIII của Đảng (1996)",
+              },
+              {
+                key: "D",
+                text: "Đại hội đại biểu toàn quốc lần thứ VII của Đảng (1991)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834479",
+            source: "LSD_LMS",
+            text: "Đại hội lần thứ IX (2001) của Đảng đã có nhận thức như thế nào về thành phần kinh tế tư nhân?:",
+            answers: [
+              {
+                key: "A",
+                text: "Là một trong những động lực quan trọng của nền kinh tế",
+              },
+              {
+                key: "B",
+                text: "Thực sự là một trong những động lực của nền kinh tế",
+              },
+              { key: "C", text: "Là một trong những động lực của nền kinh tế" },
+              {
+                key: "D",
+                text: "Coi kinh tế tư nhân là bộ phận cấu thành quan trọng của nền kinh tế quốc dân",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834412",
+            source: "LSD_LMS",
+            text: "Trong bản “Luận cương chính trị” (tháng 10-1930) Đảng xác định ưu tiên thực hiện nhiệm vụ nào trước?:",
+            answers: [
+              { key: "A", text: "Đấu tranh giải phóng giai cấp vô sản" },
+              { key: "B", text: "Đấu tranh giai cấp và cách mạng ruộng đất" },
+              { key: "C", text: "Đấu tranh dân tộc và đấu tranh giai cấp" },
+              { key: "D", text: "Đấu tranh giải phóng dân tộc" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834425",
+            source: "LSD_LMS",
+            text: "Hội nghị lần thứ 8 BCH TU (1941) Đảng đã xác định rõ hình thức đấu tranh là gì?:",
+            answers: [
+              { key: "A", text: "Thực hiện phương pháp bạo lực cách mạng" },
+              {
+                key: "B",
+                text: "Đấu tranh vũ trang kết hợp với đấu tranh chính trị",
+              },
+              { key: "C", text: "Khởi nghĩa vũ trang" },
+              { key: "D", text: "Đấu tranh quân sự, chính trị, ngoại giao" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834449",
+            source: "LSD_LMS",
+            text: "Giai đoạn 1961-1965, Đảng đã lãnh đạo nhân dân đánh bại chiến lược chiến tranh nào của đế quốc Mỹ?:",
+            answers: [
+              { key: "A", text: "Chiến lược chiến tranh cục bộ" },
+              { key: "B", text: "Chiến tranh đơn phương" },
+              { key: "C", text: "Chiến lược chiến tranh đặc biệt" },
+              { key: "D", text: "Việt Nam hóa chiến tranh" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834421",
+            source: "LSD_LMS",
+            text: "Tên gọi của Đảng trong giai đoạn đấu tranh giành chính quyền cách mạng (1939-1945) là gì?:",
+            answers: [
+              { key: "A", text: "Đảng Lao động Việt Nam" },
+              { key: "B", text: "Đảng cộng sản Việt Nam" },
+              { key: "C", text: "Đông Dương cộng sản Đảng" },
+              { key: "D", text: "Đảng cộng sản Đông Dương" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834417",
+            source: "LSD_LMS",
+            text: "Chỉ thị “Nhật - Pháp bắn nhau và hành động của chúng ta” được thông qua vào thời gian nào?:",
+            answers: [
+              { key: "A", text: "Ngày 6-3-1945" },
+              { key: "B", text: "Ngày 9-3-1945" },
+              { key: "C", text: "Ngày 12-3-1945" },
+              { key: "D", text: "Ngày 14-9-1945" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834482",
+            source: "LSD_LMS",
+            text: "Chủ đề của Đại hội đại biểu toàn quốc lần thứ X (2006) của Đảng là gì?:",
+            answers: [
+              {
+                key: "A",
+                text: '"Nâng cao năng lực lãnh đạo và sức chiến đấu của Đảng, phát huy sức mạnh toàn dân tộc, đẩy mạnh toàn diện công cuộc đổi mới, sớm đưa nước ta ra khỏi tình trạng kém phát triển"',
+              },
+              {
+                key: "B",
+                text: "“Đại hội của trí tuệ - đổi mới, dân chủ - kỷ cương - đoàn kết”",
+              },
+              {
+                key: "C",
+                text: "“Tiếp tục sự nghiệp đổi mới, đẩy mạnh công nghiệp hóa, hiện đại hóa vì mục tiêu dân giàu, nước mạnh, xã hội công bằng, văn minh, vững bước đi lên chủ nghĩa xã hội”",
+              },
+              {
+                key: "D",
+                text: "“Tiếp tục nâng cao năng lực lãnh đạo và sức chiến đấu của Đảng, phát huy sức mạnh toàn dân tộc, đẩy mạnh toàn diện công cuộc đổi mới, tạo nền tảng để đến năm 2020 nước ta cơ bản trở thành nước công nghiệp theo hướng hiện đại”",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834488",
+            source: "LSD_LMS",
+            text: "Đại hội đại biểu toàn quốc lần thứ mấy của Đảng đưa ra mục tiêu đối ngoại: “Việt Nam là bạn, đối tác tin cậy và thành viên có trách nhiệm trong cộng đồng quốc tế…”?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đại hội đại biểu toàn quốc lần thứ IX (2001) của Đảng",
+              },
+              {
+                key: "B",
+                text: "Đại hội đại biểu toàn quốc lần thứ X (2006) của Đảng",
+              },
+              {
+                key: "C",
+                text: "Đại hội đại biểu toàn quốc lần thứ XI (2011) của Đảng",
+              },
+              {
+                key: "D",
+                text: "Đại hội đại biểu toàn quốc lần thứ XII (2016) của Đảng",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834407",
+            source: "LSD_LMS",
+            text: "Tổ chức nào dưới đây được xem là tiền thân của Đảng cộng sản Việt Nam?:",
+            answers: [
+              { key: "A", text: "Tâm tâm xã" },
+              { key: "B", text: "“Hội Việt Nam cách mạng thanh niên”" },
+              { key: "C", text: "Tân Việt cách mạng đảng" },
+              { key: "D", text: "Việt Nam quốc dân Đảng" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834418",
+            source: "LSD_LMS",
+            text: "Hội nghị BCH Trung ương Đảng lần thứ 8 (5-1941) xác định  nhiệm vụ chủ yếu trước mắt của cách mạng là gì?:",
+            answers: [
+              { key: "A", text: "Giảm tô, giảm thuế, chia lại ruộng đất" },
+              { key: "B", text: "Giải phóng các dân tộc Đông Dương" },
+              {
+                key: "C",
+                text: "Xóa bỏ giai cấp địa chủ phong kiến, làm cho người cày có ruộng",
+              },
+              { key: "D", text: "Giải phóng dân tộc" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834493",
+            source: "LSD_LMS",
+            text: "Trong Cương lĩnh năm 2011, Đảng rút ra bài học kinh nghiệm về sự lãnh đạo Đảng trong quá trình đổi mới. Đáp án nào sau đây là đúng nhất?:",
+            answers: [
+              {
+                key: "A",
+                text: "Nâng cao năng lực lãnh đạo và sức chiến đấu của Đảng ngang tầm đòi hỏi",
+              },
+              {
+                key: "B",
+                text: "Thường xuyên đổi mới phương thức lãnh đạo của Đảng",
+              },
+              {
+                key: "C",
+                text: "Sự lãnh đạo đúng đắn của Đảng là nhân tố hàng đầu bảo đảm những thắng lợi của cách mạng Việt Nam",
+              },
+              {
+                key: "D",
+                text: "Sự lãnh đạo đúng đắn của Đảng là nhân tố hàng đầu quyết định thắng lợi của cách mạng Việt Nam",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834433",
+            source: "LSD_LMS",
+            text: "Đại hội đại biểu toàn quốc lần thứ II của Đảng (2/1951) đã quyết định đưa Đảng ra hoạt động công khai và đổi tên là gì?:",
+            answers: [
+              { key: "A", text: "Đảng Lao động Việt Nam" },
+              { key: "B", text: "Đảng cộng sản Đông Dương" },
+              { key: "C", text: "Đảng Dân chủ" },
+              { key: "D", text: "Đảng cộng sản Việt Nam" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834427",
+            source: "LSD_LMS",
+            text: "Sau Cách mạng tháng Tám năm 1945, để giải quyết nạn đói trước mắt, Chủ tịch Hồ Chí Minh và Đảng, Chính phủ đã có biện pháp gì?:",
+            answers: [
+              { key: "A", text: "Kêu gọi sự cứu trợ của thế giới" },
+              {
+                key: "B",
+                text: "Nhường cơm sẻ áo, kêu gọi lập hũ gạo cứu đói",
+              },
+              { key: "C", text: "Cấm dùng gạo, ngô để nấu rượu" },
+              {
+                key: "D",
+                text: "Tịch thu gạo của người giàu chia cho người nghèo",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834440",
+            source: "LSD_LMS",
+            text: "Nội dung cơ bản của bản Tạm ước Việt - Pháp (14-9-1946) là gì?:",
+            answers: [
+              { key: "A", text: "Hai bên ngừng bắn ngay ở Nam Bộ" },
+              { key: "B", text: "Nhượng cho Pháp một số quyền lợi chính trị" },
+              {
+                key: "C",
+                text: "Pháp công nhận Việt Nam có chính phủ tự trị nằm trong khối Liên Hiệp Pháp",
+              },
+              {
+                key: "D",
+                text: "Ta nhượng bộ thêm cho Pháp một số quyền lợi kinh tế - văn hoá ở Việt Nam",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834447",
+            source: "LSD_LMS",
+            text: "Phong trào “Đồng Khởi” của nhân dân miền Nam (1960) lần đầu tiên diễn ra ở địa phương sau đây?:",
+            answers: [
+              { key: "A", text: "Bến Tre" },
+              { key: "B", text: "Cà Mau" },
+              { key: "C", text: "Tây Nguyên" },
+              { key: "D", text: "Cần Thơ" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834487",
+            source: "LSD_LMS",
+            text: "Tại Đại hội lần thứ XIII (2021), Đảng xác định mục tiêu phấn đấu của Việt Nam, đến năm 2045, kỷ niệm 100 năm thành lập nước Việt Nam Dân chủ Cộng hòa, nay là nước Cộng hòa xã hội chủ nghĩa Việt Nam là gì?:",
+            answers: [
+              {
+                key: "A",
+                text: "Là nước đang phát triển, có công nghiệp theo hướng hiện đại, vượt qua mức thu nhập trung bình thấp",
+              },
+              {
+                key: "B",
+                text: "Là nước đang phát triển, có công nghiệp hiện đại, thu nhập trung bình cao",
+              },
+              { key: "C", text: "Là nước đang phát triển, có thu nhập cao" },
+              { key: "D", text: "Trở thành nước phát triển, thu nhập cao" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834467",
+            source: "LSD_LMS",
+            text: "Đại hội đại biểu toàn quốc lần thứ VII của Đảng (1991) đã nêu ra mấy phương hướng lớn xây dựng CNXH?:",
+            answers: [
+              { key: "A", text: "9 phương hướng" },
+              { key: "B", text: "7 phương hướng" },
+              { key: "C", text: "6 phương hướng" },
+              { key: "D", text: "8 phương hướng" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834435",
+            source: "LSD_LMS",
+            text: "20h 03 phút ngày 19/12/1946, những loạt đại bác đầu tiên bắn vào thành Hà Nội, báo hiệu cuộc kháng chiến toàn quốc bắt đầu. Đó là địa điểm nào?:",
+            answers: [
+              { key: "A", text: "Làng Vạn Phúc" },
+              { key: "B", text: "Ô Cầu Dền" },
+              { key: "C", text: "Chợ Đồng Xuân" },
+              { key: "D", text: "Pháo Đài Láng" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834490",
+            source: "LSD_LMS",
+            text: "Trong “Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH (bổ sung, phát triển năm 2011”, Đảng xác định mục tiêu xây dựng xã hội Việt Nam như thế nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Dân giàu, nước mạnh, dân chủ, công bằng, văn minh",
+              },
+              { key: "B", text: "Dân giàu, nước mạnh, dân chủ, văn minh" },
+              { key: "C", text: "Dân giàu, nước mạnh, công bằng, văn minh" },
+              {
+                key: "D",
+                text: "Dân giàu, nước mạnh, công bằng, dân chủ, văn minh",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834431",
+            source: "LSD_LMS",
+            text: "Nội dung cơ bản của đường lối kháng chiến chống Pháp được Đảng xác định là gì?:",
+            answers: [
+              {
+                key: "A",
+                text: "Kháng chiến toàn dân, toàn diện, lâu dài, dựa vào sức mình là chính",
+              },
+              {
+                key: "B",
+                text: "Kháng chiến toàn dân, toàn diện, lâu dài, tranh thủ sự giúp đỡ của bạn bè thế giới",
+              },
+              { key: "C", text: "Kháng chiến toàn dân, toàn diện, lâu dài" },
+              {
+                key: "D",
+                text: "Kháng chiến toàn dân, toàn diện, tự lực cánh sinh",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834459",
+            source: "LSD_LMS",
+            text: "Hội nghị Bộ Chính trị đợt 1 (1974) đề ra quyết tâm giải phóng miền Nam trong thời gian nào?:",
+            answers: [
+              { key: "A", text: "Kế hoạch hai năm 1975-1976" },
+              { key: "B", text: "Trong năm 1975" },
+              { key: "C", text: "Trước mùa mưa năm 1975" },
+              { key: "D", text: "Kế hoạch hoàn thành trong năm 1976" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834446",
+            source: "LSD_LMS",
+            text: "Tháng 1-1961 và tháng 2-1962, các Hội nghị của Bộ Chính trị đã xác định phương châm tiến công nào sau đây khi đối phó với “chiến lược chiến tranh đặc biệt” của Mỹ?:",
+            answers: [
+              { key: "A", text: "Tiến công địch tập trung vào vùng đô thị" },
+              {
+                key: "B",
+                text: "Tiến công địch chủ yếu ở các vùng nông thôn, miền núi",
+              },
+              { key: "C", text: "Tiến công địch trên cả ba vùng chiến lược" },
+              {
+                key: "D",
+                text: "Tiến công địch vào những nơi địch sơ hở, suy yếu",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834406",
+            source: "LSD_LMS",
+            text: "Hội Việt Nam Cách mạng Thanh niên thực hiện chủ trương “Vô sản hóa” vào thời điểm nào?:",
+            answers: [
+              { key: "A", text: "Cuối năm 1928 đầu năm 1929" },
+              { key: "B", text: "Cuối năm 1927 đầu năm 1928" },
+              { key: "C", text: "Cuối năm 1929 đầu năm 1930" },
+              { key: "D", text: "Cuối năm 1926 đầu năm 1927" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834474",
+            source: "LSD_LMS",
+            text: "Chủ đề của Đại hội đại biểu toàn quốc lần thứ VII (1991) của Đảng là gì?:",
+            answers: [
+              {
+                key: "A",
+                text: "“Đại hội của trí tuệ - đổi mới, dân chủ - kỷ cương - đoàn kết”",
+              },
+              {
+                key: "B",
+                text: "“Tiếp tục sự nghiệp đổi mới, đẩy mạnh công nghiệp hóa, hiện đại hóa vì mục tiêu dân giàu, nước mạnh, xã hội công bằng, văn minh, vững bước đi lên chủ nghĩa xã hội”",
+              },
+              {
+                key: "C",
+                text: '"Nâng cao năng lực lãnh đạo và sức chiến đấu của Đảng, phát huy sức mạnh toàn dân tộc, đẩy mạnh toàn diện công cuộc đổi mới, sớm đưa nước ta ra khỏi tình trạng kém phát triển"',
+              },
+              {
+                key: "D",
+                text: "“Tiếp tục nâng cao năng lực lãnh đạo và sức chiến đấu của Đảng, phát huy sức mạnh toàn dân tộc, đẩy mạnh toàn diện công cuộc đổi mới, tạo nền tảng để đến năm 2020 nước ta cơ bản trở thành nước công nghiệp theo hướng hiện đại”",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834456",
+            source: "LSD_LMS",
+            text: "Cao trào đánh Mỹ, diệt Ngụy ở miền Nam đã phát triển mạnh mẽ sau chiến thắng quân sự nào?:",
+            answers: [
+              { key: "A", text: "Chiến thắng Buôn Mê Thuột (1975)" },
+              { key: "B", text: "Chiến thắng Phước Long (1975)" },
+              { key: "C", text: "Chiến thắng Vạn Tường (1965)" },
+              { key: "D", text: "Chiến thắng Ấp Bắc (1963)" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834450",
+            source: "LSD_LMS",
+            text: "Hội nghị nào mở đường cho phong trào “Đồng khởi” ở miền Nam?:",
+            answers: [
+              {
+                key: "A",
+                text: "Hội nghị Trung ương 14 - khóa II của Đảng (11-1958)",
+              },
+              {
+                key: "B",
+                text: "Hội nghị Trung ương 15 - khóa II của Đảng  (1-1959)",
+              },
+              {
+                key: "C",
+                text: "Hội nghị Trung ương 12 - khóa II của Đảng  (3-1957)",
+              },
+              {
+                key: "D",
+                text: "Hội nghị Trung ương 13 - khóa II của Đảng (12-1957)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834429",
+            source: "LSD_LMS",
+            text: "Chỉ thị “Kháng chiến kiến quốc” thông qua trong thời gian nào?:",
+            answers: [
+              { key: "A", text: "Ngày 22/11/1945" },
+              { key: "B", text: "Ngày 25/11/1945" },
+              { key: "C", text: "Ngày 25/11/1946" },
+              { key: "D", text: "Ngày 22/11/1946" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834465",
+            source: "LSD_LMS",
+            text: "Đại hội nào của Đảng khởi xướng công cuộc đổi mới toàn diện đất nước?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đại hội đại biểu toàn quốc lần thứ VIII của Đảng (1996)",
+              },
+              {
+                key: "B",
+                text: "Đại hội đại biểu toàn quốc lần thứ VI của Đảng (1986)",
+              },
+              {
+                key: "C",
+                text: "Đại hội đại biểu toàn quốc lần thứ IX của Đảng (2001)",
+              },
+              {
+                key: "D",
+                text: "Đại hội đại biểu toàn quốc lần thứ VII của Đảng (1991)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834402",
+            source: "LSD_LMS",
+            text: "Hoạt động nào dưới đây của Nguyễn Ái Quốc có ý nghĩa là sự chuẩn bị về mặt tổ chức cho việc thành lập Đảng Cộng sản Việt Nam?:",
+            answers: [
+              {
+                key: "A",
+                text: "Thành lập “Hội Việt Nam cách mạng Thanh niên”",
+              },
+              { key: "B", text: "Tham gia sáng lập “Đảng Cộng sản Pháp”" },
+              {
+                key: "C",
+                text: "Thành lập “Hội Liên hiệp các dân tộc thuộc địa”",
+              },
+              {
+                key: "D",
+                text: "Chủ trì Hội nghị hợp nhất các tổ chức cộng sản",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834422",
+            source: "LSD_LMS",
+            text: "Tháng 5/1945, Hội nghị quân sự Bắc kỳ quyết định thống nhất các lực lượng vũ trang, tên gọi là gì?:",
+            answers: [
+              { key: "A", text: "Quân đội nhân dân Việt Nam" },
+              { key: "B", text: "Việt Nam tuyên truyền giải phóng quân" },
+              { key: "C", text: "Việt Nam giải phóng quân" },
+              { key: "D", text: "Cứu quốc quân" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834484",
+            source: "LSD_LMS",
+            text: "Việt Nam đã trở thành thành viên của tổ chức WTO năm nào?:",
+            answers: [
+              { key: "A", text: "Năm 2007" },
+              { key: "B", text: "Năm 2009" },
+              { key: "C", text: "Năm 2006" },
+              { key: "D", text: "Năm 2008" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834414",
+            source: "LSD_LMS",
+            text: "Đâu là nguyên nhân cơ bản nhất quyết định sự bùng nổ của phong trào cách mạng 1930 - 1931?:",
+            answers: [
+              {
+                key: "A",
+                text: "Thực dân Pháp tiến hành khủng bố trắng sau khởi nghĩa Yên Bái",
+              },
+              {
+                key: "B",
+                text: "Ảnh hưởng cuộc khủng hoảng kinh tế 1929-1933 làm đời sống nhân dân cơ cực",
+              },
+              {
+                key: "C",
+                text: "Địa chủ phong kiến tay sai tăng cường bóc lột nhân dân Việt Nam",
+              },
+              {
+                key: "D",
+                text: "Đảng Cộng sản Việt Nam ra đời kịp thời lãnh đạo phong trào đấu tranh",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834411",
+            source: "LSD_LMS",
+            text: "Chủ trương chuyển hướng chỉ đạo chiến lược cách mạng của Đảng được bắt đầu từ Hội nghị Trung ương nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 2 (7/1936)",
+              },
+              {
+                key: "B",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 8 (5/1941)",
+              },
+              {
+                key: "C",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 6  (11/1939)",
+              },
+              {
+                key: "D",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 7 (11/1940)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834408",
+            source: "LSD_LMS",
+            text: "Những hoạt động nào sau đây của Nguyễn Ái Quốc chứng tỏ từ một người yêu nước chân chính Người đã trở thành người cộng sản?:",
+            answers: [
+              {
+                key: "A",
+                text: "Nhận ra những vấn đề quan trong trong bản “Sơ thảo Lần thứ nhất những Luận cương về vấn đề dân tộc và vấn đề thuộc địa” của Lênin",
+              },
+              {
+                key: "B",
+                text: "Gửi yêu sách đến hội nghị Vecxây, thành lập “Hội liên hiệp thuộc địa”",
+              },
+              {
+                key: "C",
+                text: "Bỏ phiếu tán thành gia nhập Quốc tế cộng sản và tham gia sáng lập Đảng cộng sản Pháp",
+              },
+              { key: "D", text: "Tham gia Đảng xã hội của Pháp" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834475",
+            source: "LSD_LMS",
+            text: "Nội dung nào sau đây không đúng với vai trò lãnh đạo của Đảng cộng sản Việt Nam?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đảng lãnh đạo bằng cương lĩnh, chiến lược, các định hướng về chính sách và chủ trương lớn.",
+              },
+              {
+                key: "B",
+                text: "Đảng lãnh đạo bằng công tác tuyên truyền, thuyết phục, vận động, tổ chức, kiểm tra, giám sát và bằng hành động gương mẫu của đảng viên",
+              },
+              {
+                key: "C",
+                text: "Đảng lãnh đạo thông qua tổ chức đảng và đảng viên hoạt động trong các tổ chức chính trị",
+              },
+              {
+                key: "D",
+                text: "Đảng lãnh đạo bằng Hiến pháp và hệ thống pháp luật Việt Nam",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834448",
+            source: "LSD_LMS",
+            text: "Hình thức đấu tranh chủ yếu của nhân dân miền Nam trong giai đoạn 1954-1958 là gì?:",
+            answers: [
+              { key: "A", text: "Đấu tranh vũ trang" },
+              {
+                key: "B",
+                text: "Cả đấu tranh vũ trang và đấu tranh chính trị",
+              },
+              { key: "C", text: "Đấu tranh ngoại giao" },
+              { key: "D", text: "Đấu tranh chính trị" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834439",
+            source: "LSD_LMS",
+            text: "Trong “Chính cương của Đảng Lao động Việt Nam” (2-1951), Đảng xác định động lực của cách mạng gồm những giai cấp nào sau đây?:",
+            answers: [
+              {
+                key: "A",
+                text: "Công nhân, nông dân, tiểu tư sản, thân sĩ yêu nước",
+              },
+              {
+                key: "B",
+                text: "Công nhân, nông dân, tiểu tư sản, tư sản dân tộc",
+              },
+              {
+                key: "C",
+                text: "Công nhân, nông dân, tư sản dân tộc, địa chủ nhỏ",
+              },
+              { key: "D", text: "Công nhân, nông dân, tiểu tư sản, trí thức" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834428",
+            source: "LSD_LMS",
+            text: "Kẻ thù chính của cách mạng Việt Nam ngay sau Cách mạng tháng Tám - 1945 là lực lượng nào sau đây?:",
+            answers: [
+              { key: "A", text: "Thực dân Pháp" },
+              { key: "B", text: "Thực dân Anh" },
+              { key: "C", text: "Quân Tưởng Giới Thạch và tay sai" },
+              { key: "D", text: "Giặc đói và giặc dốt" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834401",
+            source: "LSD_LMS",
+            text: "Chiến lược cơ bản của cách mạng Việt Nam được Nguyễn Ái Quốc trình bày trong tài liệu nào dưới đây?:",
+            answers: [
+              { key: "A", text: "Tạp chí thư tín quôc tế" },
+              { key: "B", text: "Tác phẩm “Bản án chế độ thực dân Pháp”" },
+              { key: "C", text: "Tác phẩm “Đường cách mệnh”" },
+              { key: "D", text: "Báo “Người cùng khổ”" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834443",
+            source: "LSD_LMS",
+            text: "Sau Hiệp định Giơnevơ (1954), Việt Nam rơi vào hoàn cảnh đặc biệt nào?:",
+            answers: [
+              { key: "A", text: "Tình hình chính trị, kinh tế không ổn định" },
+              {
+                key: "B",
+                text: "Đất nước tạm thời chia cắt thành 2 miền với 2 chế độ chính trị khác nhau",
+              },
+              {
+                key: "C",
+                text: "Đế quốc Mỹ mang quân ra miền Bắc Việt Nam, thực hiện âm mưu xâm lược",
+              },
+              {
+                key: "D",
+                text: "Thực dân Pháp vẫn chưa chịu rút quân về nước",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834438",
+            source: "LSD_LMS",
+            text: "Khó khăn lớn nhất trong lĩnh vực đối ngoại  của Nhà nước Việt Nam Dân chủ Cộng hoà, sau Cách mạng Tháng Tám năm 1945 là gì?:",
+            answers: [
+              {
+                key: "A",
+                text: "Quan hệ với các nước Trung Hoa Dân quốc và Liên Xô chưa được thúc đẩy",
+              },
+              {
+                key: "B",
+                text: "Chưa có quốc gia nào ủng hộ lập trường độc lập và công nhận địa vị pháp lý về mặt nhà nước của Việt Nam",
+              },
+              { key: "C", text: "Các nước tư bản bao vây, cấm vận nước ta" },
+              {
+                key: "D",
+                text: "Mối quan hệ với các nước khu vực Đông Nam Á chưa được thuận lợi",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834473",
+            source: "LSD_LMS",
+            text: "Việt Nam thiết lập quan hệ ngoại giao với Hoa Kỳ năm nào?:",
+            answers: [
+              { key: "A", text: "1994" },
+              { key: "B", text: "1995" },
+              { key: "C", text: "1997" },
+              { key: "D", text: "1996" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834460",
+            source: "LSD_LMS",
+            text: "Hội nghị nào của BCH Trung ương Đảng đã xác định đường lối đấu tranh chống chiến lược chiến tranh cục bộ của Đế quốc Mỹ?:",
+            answers: [
+              {
+                key: "A",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 11 (3-1965) và Hội nghị Ban chấp hành Trung ương lần thứ 12 (12/1965)",
+              },
+              {
+                key: "B",
+                text: "Hội nghị Bộ Chính trị tháng 1/1961 và tháng 2/1962",
+              },
+              {
+                key: "C",
+                text: "Hội nghị Ban chấp hành Trung ương lần thứ 15 - khóa II  (1-1959)",
+              },
+              { key: "D", text: "Cả 3 đáp án còn lại đều sai" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834452",
+            source: "LSD_LMS",
+            text: "Chiến dịch Hồ Chí Minh giải phóng Sài Gòn - Gia Định bắt đầu từ ngày nào?:",
+            answers: [
+              { key: "A", text: "Ngày 6/1/1975" },
+              { key: "B", text: "Ngày 4/3/1975" },
+              { key: "C", text: "Ngày 5/3/1975" },
+              { key: "D", text: "Ngày 26/4/1975" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834471",
+            source: "LSD_LMS",
+            text: "Đảng nhận định Việt Nam đã thoát ra khỏi khủng hoảng kinh tế - xã hội tại Đại hội nào?:",
+            answers: [
+              {
+                key: "A",
+                text: "Đại hội đại biểu toàn quốc lần thứ VI của Đảng (1986)",
+              },
+              {
+                key: "B",
+                text: "Đại hội đại biểu toàn quốc lần thứ IX của Đảng (2001)",
+              },
+              {
+                key: "C",
+                text: "Đại hội đại biểu toàn quốc lần thứ VIII của Đảng (1996)",
+              },
+              {
+                key: "D",
+                text: "Đại hội đại biểu toàn quốc lần thứ VII của Đảng (1991)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834476",
+            source: "LSD_LMS",
+            text: "Nghị quyết nào sau đây được xem như là “Tuyên ngôn văn hóa” của Đảng trong thời kì CNH-HĐH?:",
+            answers: [
+              { key: "A", text: "Hội nghị lần thứ 5 (7/1998) khóa VIII" },
+              { key: "B", text: "Hội nghị lần thứ 6 (2/1999), Khóa VIII" },
+              { key: "C", text: "Hội nghị lần thứ 2 (12/1996), khóa VIII" },
+              { key: "D", text: "Hội nghị giữa nhiệm kỳ (1/1994) Khóa VII" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834495",
+            source: "LSD_LMS",
+            text: "Hội nghị nào của BCH TƯ Đảng Khóa XI, đưa ra kết luận tiếp tục tăng cường sự lãnh đạo của Đảng đối với công tác phòng, chống tham nhũng, lãng phí?:",
+            answers: [
+              {
+                key: "A",
+                text: "Nghị quyết số 29-NQ/TW, ngày 4/11/2013, Hội nghị Trung ương 8 (khóa XI)",
+              },
+              {
+                key: "B",
+                text: "Nghị quyết số 20-NQ/TW BCH (10-2012), Hội nghị Trung ương 6 (khóa XI)",
+              },
+              {
+                key: "C",
+                text: "Nghị quyết số 12-NQ/TW, ngày 16/01/2012, Hội nghị Trung ương 4 (khóa XI)",
+              },
+              {
+                key: "D",
+                text: "Nghị quyết số 25-NQ/TW, ngày 03/6/2013, Hội nghị Trung ương 7 (khóa XI)",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834424",
+            source: "LSD_LMS",
+            text: "Tại sao nói cách mạng tháng Tám có tính chất dân chủ nhưng chưa đầy đủ và sâu sắc?:",
+            answers: [
+              {
+                key: "A",
+                text: "Chưa phát huy tinh thần đoàn kết của nhân dân",
+              },
+              { key: "B", text: "Chưa xóa bỏ hết triều đại phong kiến" },
+              {
+                key: "C",
+                text: "Chưa làm cách mạng ruộng đất, xóa bỏ tàn tích phong kiến",
+              },
+              { key: "D", text: "Chưa giành được độc lập tự do cho nhân dân" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834415",
+            source: "LSD_LMS",
+            text: "Hình thức đấu tranh chủ yếu trong phong trào vận động dân chủ giai đoạn 1936-1939 là gì?:",
+            answers: [
+              { key: "A", text: "Chính trị" },
+              { key: "B", text: "Vũ trang" },
+              { key: "C", text: "Quân sự, chính trị và ngoại giao" },
+              { key: "D", text: "Quân sự và chính trị" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834481",
+            source: "LSD_LMS",
+            text: "Theo quan điểm của Đảng trong Đại hội ĐBTQ lần thứ X (2006), sức mạnh toàn dân tộc bao gồm những lực lượng nào sau đây?:",
+            answers: [
+              {
+                key: "A",
+                text: "Giai cấp công nhân, nông dân, trí thức, các doanh nhân và người lao động",
+              },
+              {
+                key: "B",
+                text: "Đồng bào các dân tộc, các tôn giáo, các tầng lớp nhân dân ở trong nước và người Việt Nam định cư ở nước ngoài",
+              },
+              {
+                key: "C",
+                text: "Các giai cấp, tầng lớp, các tôn giáo, nhân dân ở trong nước và người Việt Nam đang sinh sống, học tập, lao động tại nước ngoài",
+              },
+              {
+                key: "D",
+                text: "Đồng bào các dân tộc, các tôn giáo, các tầng lớp nhân dân ở trong nước",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834430",
+            source: "LSD_LMS",
+            text: "Cuộc kháng chiến toàn quốc chống thực dân Pháp bùng nổ vào thời gian nào?:",
+            answers: [
+              { key: "A", text: "Đêm ngày 18/12/1946" },
+              { key: "B", text: "Sáng ngày 20/12/1946" },
+              { key: "C", text: "Đêm ngày 19/12/1946" },
+              { key: "D", text: "Đêm ngày 20/12/1946" },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834444",
+            source: "LSD_LMS",
+            text: "Đại hội lần thứ III (1960) của Đảng đã xác định thực hiện công nghiệp hóa bằng biện pháp nào sau đây?:",
+            answers: [
+              {
+                key: "A",
+                text: "Tập trung sức phát triển Nông nghiệp, dịch vụ",
+              },
+              {
+                key: "B",
+                text: "Ưu tiên phát triển công nghiệp nặng một cách hợp lý, đồng thời ra sức phát triển nông nghiệp và công nghiệp nhẹ",
+              },
+              {
+                key: "C",
+                text: "Uu tiên phát triển công nghiệp nhẹ và nông nghiệp, chỉ tập trung một số ngành công nghiệp nặng",
+              },
+              {
+                key: "D",
+                text: "Ưu tiên phát triển công nghiệp nặng một cách hợp lý, trên cơ sở ra sức phát triển nông nghiệp và công nghiệp nhẹ",
+              },
+            ],
+            correct: null,
+          },
+          {
+            id: "448834451",
+            source: "LSD_LMS",
+            text: "Giai đoạn 1965-1968, Đảng đã lãnh đạo nhân dân đánh bại chiến lược chiến tranh nào của đế quốc Mỹ?:",
+            answers: [
+              { key: "A", text: "Chiến lược chiến tranh cục bộ" },
+              { key: "B", text: "Chiến tranh đơn phương" },
+              { key: "C", text: "Chiến lược chiến tranh đặc biệt" },
+              { key: "D", text: "Việt Nam hóa chiến tranh" },
+            ],
+            correct: null,
+          },
+        ],
+      };
+
+      function deepClone(x) {
+        return JSON.parse(JSON.stringify(x));
+      }
+
+      let state = {
+        mode: "chuong1",
+        session: [],
+        index: 0,
+        correct: 0,
+        wrong: 0,
+        answered: false,
+        selected: null,
+        manual: false,
+        waitingAutoNext: null,
+      };
+
+      function buildRandom60() {
+        const pool = [...BANK.chuong1, ...BANK.chuong2, ...BANK.chuong3];
+        const shuffled = pool
+          .map((v) => [Math.random(), v])
+          .sort((a, b) => a[0] - b[0])
+          .map((x) => x[1]);
+        return shuffled.slice(0, Math.min(50, shuffled.length));
+      }
+
+      function getSessionByMode(mode) {
+        if (mode === "random60") return buildRandom60();
+        return deepClone(BANK[mode] || []);
+      }
+
+      function setMode(mode, fromButton = false) {
+        state.mode = mode;
+        state.session = getSessionByMode(mode);
+        state.index = 0;
+        state.correct = 0;
+        state.wrong = 0;
+        state.answered = false;
+        state.selected = null;
+        clearTimeout(state.waitingAutoNext);
+        state.waitingAutoNext = null;
+
+        // UI
+        document.getElementById("pillDataset").textContent =
+          mode === "chuong1"
+            ? "Chương 1"
+            : mode === "chuong2"
+            ? "Chương 2"
+            : mode === "chuong3"
+            ? "Chương 3"
+            : mode === "lsd_lms"
+            ? "LSD_LMS"
+            : "Random 60 (Ch1–Ch3)";
+
+        const noKey = mode === "lsd_lms";
+        document.getElementById("hint").textContent = noKey
+          ? "Bộ LSD_LMS không kèm đáp án trong file nguồn nên chỉ luyện chọn đáp án (không chấm đúng/sai). Link đề gốc tham khảo đáp án : https://azota.vn/de-thi/3xqyfb"
+          : state.manual
+          ? "Chế độ thủ công: chọn đáp án rồi bấm 'Kiểm tra' (và 'Next' để qua câu)."
+          : "Tip: chọn đáp án để hiện đúng/sai. Auto sẽ tự chuyển câu tiếp theo.";
+
+        render();
+      }
+
+      function shuffleCurrent() {
+        const s = state.session;
+        for (let i = s.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [s[i], s[j]] = [s[j], s[i]];
+        }
+        state.index = 0;
+        state.correct = 0;
+        state.wrong = 0;
+        state.answered = false;
+        state.selected = null;
+        clearTimeout(state.waitingAutoNext);
+        state.waitingAutoNext = null;
+        render();
+      }
+
+      function resetCurrent() {
+        setMode(state.mode);
+      }
+
+      function render() {
+        const total = state.session.length;
+        const idx = Math.min(state.index, Math.max(0, total - 1));
+        state.index = idx;
+
+        document.getElementById("pillIndex").textContent = total ? idx + 1 : 0;
+        document.getElementById("pillTotal").textContent = total;
+        document.getElementById("pillCorrect").textContent = state.correct;
+        document.getElementById("pillWrong").textContent = state.wrong;
+
+        const pct = total ? Math.round(((idx + 1) / total) * 100) : 0;
+        document.getElementById("progressBar").style.width = pct + "%";
+
+        const q = state.session[idx];
+        document.getElementById("qid").textContent = q
+          ? "ID: " + (q.id ?? "")
+          : "";
+
+        const qText = document.getElementById("qText");
+        const answersEl = document.getElementById("answers");
+        const feedback = document.getElementById("feedback");
+
+        answersEl.innerHTML = "";
+        feedback.classList.add("hidden");
+        feedback.classList.remove("good", "bad", "warn");
+        feedback.textContent = "";
+
+        if (!q) {
+          qText.textContent = "Không có câu hỏi trong bộ này.";
+          return;
+        }
+
+        qText.textContent = q.text;
+
+        const noKey = !q.correct;
+
+        q.answers.forEach((a) => {
+          const btn = document.createElement("button");
+          btn.className = "answer";
+          btn.type = "button";
+          btn.setAttribute("data-key", a.key);
+          btn.innerHTML = `
+      <div class="badge">${a.key}</div>
+      <div class="txt">${escapeHtml(a.text)}</div>
+    `;
+          btn.addEventListener("click", () => onPick(a.key));
+          answersEl.appendChild(btn);
+        });
+
+        // manual UI
+        const manualBtns = document.getElementById("manualBtns");
+        manualBtns.classList.toggle("hidden", !state.manual);
+
+        // in auto mode, answers should be clickable anytime unless already answered then still allow? lock.
+        if (state.answered) {
+          applyMarking();
+        }
+
+        // adjust hint for no key
+        if (state.mode === "lsd_lms") {
+          document.getElementById("pillCorrect").textContent = "—";
+          document.getElementById("pillWrong").textContent = "—";
+        }
+      }
+
+      function escapeHtml(str) {
+        return (str ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#039;",
+            }[m])
+        );
+      }
+
+      function onPick(key) {
+        const q = state.session[state.index];
+        if (!q) return;
+
+        // always record selection
+        state.selected = key;
+
+        if (state.mode === "lsd_lms") {
+          // no answer key
+          showFeedback(
+            "Bộ này không có đáp án trong file nguồn (không chấm đúng/sai).",
+            "warn"
+          );
+          // allow next behavior
+          if (!state.manual) autoNextSoon();
+          return;
+        }
+
+        if (state.manual) {
+          // just mark selected visually (no grading yet)
+          applySelectedOnly();
+          return;
+        }
+
+        // auto: grade immediately
+        gradeNow();
+      }
+
+      function applySelectedOnly() {
+        const q = state.session[state.index];
+        const answersEl = document.getElementById("answers");
+        const btns = [...answersEl.querySelectorAll(".answer")];
+        btns.forEach((b) => {
+          b.classList.remove("correct", "wrong", "dim");
+          const k = b.getAttribute("data-key");
+          if (state.selected && k !== state.selected) b.classList.add("dim");
+        });
+      }
+
+      function applyMarking() {
+        const q = state.session[state.index];
+        const answersEl = document.getElementById("answers");
+        const btns = [...answersEl.querySelectorAll(".answer")];
+        btns.forEach((b) => {
+          b.classList.remove("correct", "wrong", "dim");
+          const k = b.getAttribute("data-key");
+          if (k === q.correct) b.classList.add("correct");
+          else if (state.selected && k === state.selected && k !== q.correct)
+            b.classList.add("wrong");
+          else if (state.selected) b.classList.add("dim");
+        });
+      }
+
+      function showFeedback(text, kind) {
+        const fb = document.getElementById("feedback");
+        fb.textContent = text;
+        fb.classList.remove("hidden");
+        fb.classList.remove("good", "bad", "warn");
+        fb.classList.add(kind);
+      }
+
+      function gradeNow() {
+        const q = state.session[state.index];
+        if (!q || !q.correct) return;
+
+        if (!state.selected) {
+          showFeedback("Chọn 1 đáp án trước đã.", "warn");
+          return;
+        }
+
+        if (state.answered) {
+          applyMarking();
+          return;
+        }
+
+        state.answered = true;
+
+        if (state.selected === q.correct) {
+          state.correct += 1;
+          showFeedback("✅ ĐÚNG", "good");
+        } else {
+          state.wrong += 1;
+          showFeedback("❌ SAI • Đáp án đúng: " + q.correct, "bad");
+        }
+
+        applyMarking();
+
+        if (!state.manual) autoNextSoon();
+      }
+
+      function autoNextSoon() {
+        clearTimeout(state.waitingAutoNext);
+        state.waitingAutoNext = setTimeout(() => {
+          nextQuestion();
+        }, 1000);
+      }
+
+      function nextQuestion() {
+        clearTimeout(state.waitingAutoNext);
+        state.waitingAutoNext = null;
+        state.index = Math.min(state.index + 1, state.session.length); // allow pass end
+        state.answered = false;
+        state.selected = null;
+
+        if (state.index >= state.session.length) {
+          // finish
+          const noKey = state.mode === "lsd_lms";
+          const msg = noKey
+            ? "Đã tới hết câu trong LSD_LMS."
+            : `Hoàn thành! Đúng: ${state.correct} • Sai: ${state.wrong}`;
+          showFeedback(msg, "warn");
+          // clamp to last question for viewing
+          state.index = Math.max(0, state.session.length - 1);
+        }
+
+        render();
+      }
+      function backQuestion() {
+        clearTimeout(state.waitingAutoNext);
+        state.waitingAutoNext = null;
+        state.index = Math.max(state.index - 1, 0); // clamp to 0 (first question)
+        state.answered = false;
+        state.selected = null;
+
+        if (state.index === 0) {
+          showFeedback("Đã về câu 1");
+        }
+
+        render();
+      }
+      document
+        .getElementById("datasetSelect")
+        .addEventListener("change", (e) => {
+          const mode = e.target.value;
+          setMode(mode);
+        });
+
+      document.getElementById("btnRandom60").addEventListener("click", () => {
+        document.getElementById("datasetSelect").value = "random60";
+        setMode("random60", true);
+      });
+
+      document
+        .getElementById("btnShuffle")
+        .addEventListener("click", shuffleCurrent);
+      document
+        .getElementById("btnReset")
+        .addEventListener("click", resetCurrent);
+
+      document
+        .getElementById("manualToggle")
+        .addEventListener("change", (e) => {
+          state.manual = !!e.target.checked;
+          // reset per question state to avoid weird transitions
+          state.answered = false;
+          state.selected = null;
+          clearTimeout(state.waitingAutoNext);
+          state.waitingAutoNext = null;
+
+          const noKey = state.mode === "lsd_lms";
+          document.getElementById("hint").textContent = noKey
+            ? "Bộ LSD_LMS không kèm đáp án trong file nguồn nên chỉ luyện chọn đáp án (không chấm đúng/sai)."
+            : state.manual
+            ? "Chế độ thủ công: chọn đáp án rồi bấm 'Kiểm tra' (và 'Next' để qua câu)."
+            : "Tip: chọn đáp án để hiện đúng/sai. Auto sẽ tự chuyển câu tiếp theo.";
+          render();
+        });
+
+      document.getElementById("btnCheck").addEventListener("click", () => {
+        if (state.mode === "lsd_lms") {
+          showFeedback("Bộ này không có đáp án để 'Kiểm tra'.", "warn");
+          return;
+        }
+        gradeNow();
+      });
+
+      document
+        .getElementById("btnNext")
+        .addEventListener("click", nextQuestion);
+      document
+        .getElementById("btnBack")
+        .addEventListener("click", backQuestion);
+
+      // init
+      setMode("chuong1");
+    </script>
+  </body>
+</html>
