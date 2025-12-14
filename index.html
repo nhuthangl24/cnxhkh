@@ -9982,49 +9982,66 @@
         clearTimeout(state.waitingAutoNext);
         state.waitingAutoNext = null;
         state.index = Math.min(state.index + 1, state.session.length); // allow pass end
-        state.answered = false;
-        state.selected = null;
-
-        if (state.index >= state.session.length) {
-          // finish
-          state.isFinished = true;
-          // Lưu kết quả vào lịch sử
-          state.history.push({
-            round: state.history.length + 1,
-            mode: state.mode,
-            correct: state.correct,
-            wrong: state.wrong,
-            total: state.session.length,
-            correctQuestions: deepClone(state.correctQuestions),
-            incorrectQuestions: deepClone(state.incorrectQuestions),
-            timestamp: new Date().toLocaleTimeString('vi-VN'),
-          });
-          const noKey = state.mode === "lsd_lms";
-          const msg = noKey
-            ? "Đã tới hết câu trong LSD_LMS."
-            : `Hoàn thành! Đúng: ${state.correct} • Sai: ${state.wrong}`;
-          showFeedback(msg, "warn");
-          // clamp to last question for viewing
-          state.index = Math.max(0, state.session.length - 1);
+        
+        // Only reset answered/selected if not in review mode
+        if (!state.reviewMode) {
+          state.answered = false;
+          state.selected = null;
         }
 
-        state.reviewMode = false;
-        state.reviewType = null;
+        if (state.index >= state.session.length) {
+          // If in review mode, just go back to last question
+          if (state.reviewMode) {
+            state.index = Math.max(0, state.session.length - 1);
+            showFeedback("Đã hết câu trong mục này", "warn");
+          } else {
+            // finish normal session
+            state.isFinished = true;
+            // Lưu kết quả vào lịch sử
+            state.history.push({
+              round: state.history.length + 1,
+              mode: state.mode,
+              correct: state.correct,
+              wrong: state.wrong,
+              total: state.session.length,
+              correctQuestions: deepClone(state.correctQuestions),
+              incorrectQuestions: deepClone(state.incorrectQuestions),
+              timestamp: new Date().toLocaleTimeString('vi-VN'),
+            });
+            const noKey = state.mode === "lsd_lms";
+            const msg = noKey
+              ? "Đã tới hết câu trong LSD_LMS."
+              : `Hoàn thành! Đúng: ${state.correct} • Sai: ${state.wrong}`;
+            showFeedback(msg, "warn");
+            // clamp to last question for viewing
+            state.index = Math.max(0, state.session.length - 1);
+          }
+        }
+
+        // Don't exit review mode when navigating in review
+        if (!state.reviewMode) {
+          state.reviewMode = false;
+          state.reviewType = null;
+        }
         render();
       }
       function backQuestion() {
         clearTimeout(state.waitingAutoNext);
         state.waitingAutoNext = null;
         state.index = Math.max(state.index - 1, 0); // clamp to 0 (first question)
-        state.answered = false;
-        state.selected = null;
+        // Keep the answered state and selected answer when going back
+        // state.answered = false;
+        // state.selected = null;
 
-        if (state.index === 0) {
+        if (state.index === 0 && !state.reviewMode) {
           showFeedback("Đã về câu 1");
         }
 
-        state.reviewMode = false;
-        state.reviewType = null;
+        // Don't exit review mode when navigating back in review
+        if (!state.reviewMode) {
+          state.reviewMode = false;
+          state.reviewType = null;
+        }
         render();
       }
 
