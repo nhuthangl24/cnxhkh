@@ -372,6 +372,30 @@
                 <button class="btn" id="btnCheck">Kiểm tra</button>
                 <button class="btn" id="btnNext">Next</button>
               </div>
+              <button
+                class="btn"
+                id="btnReviewIncorrect"
+                title="Xem lại các câu sai"
+              >
+                Các câu sai
+              </button>
+              <button
+                class="btn"
+                id="btnReviewCorrect"
+                title="Xem lại các câu đúng"
+              >
+               Các câu đúng
+              </button>
+              <button
+                class="btn"
+                id="btnHistory"
+                title="Xem lịch sử các lần làm"
+              >
+                Lịch sử làm bài
+              </button>
+              <button class="btn hidden" id="btnExitReview" title="Quay lại">
+                Quay lại
+              </button>
             </div>
           </div>
 
@@ -9622,6 +9646,12 @@
         selected: null,
         manual: false,
         waitingAutoNext: null,
+        correctQuestions: [],
+        incorrectQuestions: [],
+        reviewMode: false,
+        reviewType: null, // 'correct' hoặc 'incorrect'
+        isFinished: false,
+        history: [], // Lưu lịch sử các lần làm bài
       };
 
       function buildRandom60() {
@@ -9648,6 +9678,11 @@
         state.selected = null;
         clearTimeout(state.waitingAutoNext);
         state.waitingAutoNext = null;
+        state.correctQuestions = [];
+        state.incorrectQuestions = [];
+        state.reviewMode = false;
+        state.reviewType = null;
+        state.isFinished = false;
 
         // UI
         document.getElementById("pillDataset").textContent =
@@ -9684,6 +9719,11 @@
         state.selected = null;
         clearTimeout(state.waitingAutoNext);
         state.waitingAutoNext = null;
+        state.correctQuestions = [];
+        state.incorrectQuestions = [];
+        state.reviewMode = false;
+        state.reviewType = null;
+        state.isFinished = false;
         render();
       }
 
@@ -9717,6 +9757,61 @@
         feedback.classList.add("hidden");
         feedback.classList.remove("good", "bad", "warn");
         feedback.textContent = "";
+
+        // Update review buttons and exit button
+        const btnReviewIncorrect =
+          document.getElementById("btnReviewIncorrect");
+        const btnReviewCorrect = document.getElementById("btnReviewCorrect");
+        const btnExitReview = document.getElementById("btnExitReview");
+        const btnHistory = document.getElementById("btnHistory");
+
+        btnReviewIncorrect.classList.toggle(
+          "hidden",
+          state.reviewMode || !state.isFinished
+        );
+        btnReviewCorrect.classList.toggle(
+          "hidden",
+          state.reviewMode || !state.isFinished
+        );
+        btnHistory.classList.toggle(
+          "hidden",
+          state.reviewMode || state.history.length === 0
+        );
+        btnExitReview.classList.toggle("hidden", !state.reviewMode);
+
+        // Hiển thị history list
+        if (state.reviewMode && state.reviewType === "history") {
+          qText.innerHTML = '<strong>Lịch sử các lần làm bài:</strong>';
+          answersEl.innerHTML = state.history
+            .map((item) => `
+              <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; cursor: pointer;" onclick="viewHistoryRound(${item.round})">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div>
+                    <strong>Lần ${item.round}</strong> | ${item.timestamp}
+                  </div>
+                  <div style="font-weight: bold;">
+                    Đúng: <span style="color: #1f8f5f;">${item.correct}</span> | Sai: <span style="color: #c13f3f;">${item.wrong}</span> / ${item.total}
+                  </div>
+                </div>
+              </div>
+            `)
+            .join("");
+          feedback.classList.add("hidden");
+          return;
+        }
+
+        if (state.reviewMode && state.reviewType === "history-detail") {
+          const historyItem = state.history[state.session[idx]?.roundIndex || 0];
+          document.getElementById("pillDataset").textContent = `Lịch sử: Lần ${idx + 1}`;
+        }
+
+        // Show review info
+        if (state.reviewMode) {
+          const reviewText =
+            state.reviewType === "incorrect" ? "CÂU SAI" : "CÂU ĐÚNG";
+          document.getElementById("pillDataset").textContent =
+            "Xem lại: " + reviewText;
+        }
 
         if (!q) {
           qText.textContent =
@@ -9754,6 +9849,19 @@
         if (state.mode === "lsd_lms") {
           document.getElementById("pillCorrect").textContent = "—";
           document.getElementById("pillWrong").textContent = "—";
+        }
+
+        // Show review info in feedback
+        if (state.reviewMode && q.userAnswer !== undefined) {
+          const isCorrect = q.userAnswer === q.correct;
+          const userAnswerText =
+            q.answers.find((a) => a.key === q.userAnswer)?.text || q.userAnswer;
+          const correctAnswerText =
+            q.answers.find((a) => a.key === q.correct)?.text || q.correct;
+          const feedbackMsg = isCorrect
+            ? `Câu này bạn chọn đúng: ${q.userAnswer}`
+            : `Bạn chọn: ${q.userAnswer} (sai) • Đáp án đúng: ${q.correct}`;
+          showFeedback(feedbackMsg, isCorrect ? "good" : "bad");
         }
       }
 
@@ -9850,9 +9958,11 @@
 
         if (state.selected === q.correct) {
           state.correct += 1;
+          state.correctQuestions.push({ ...q, userAnswer: state.selected });
           showFeedback("✅ ĐÚNG", "good");
         } else {
           state.wrong += 1;
+          state.incorrectQuestions.push({ ...q, userAnswer: state.selected });
           showFeedback("❌ SAI • Đáp án đúng: " + q.correct, "bad");
         }
 
@@ -9877,6 +9987,18 @@
 
         if (state.index >= state.session.length) {
           // finish
+          state.isFinished = true;
+          // Lưu kết quả vào lịch sử
+          state.history.push({
+            round: state.history.length + 1,
+            mode: state.mode,
+            correct: state.correct,
+            wrong: state.wrong,
+            total: state.session.length,
+            correctQuestions: deepClone(state.correctQuestions),
+            incorrectQuestions: deepClone(state.incorrectQuestions),
+            timestamp: new Date().toLocaleTimeString('vi-VN'),
+          });
           const noKey = state.mode === "lsd_lms";
           const msg = noKey
             ? "Đã tới hết câu trong LSD_LMS."
@@ -9886,6 +10008,8 @@
           state.index = Math.max(0, state.session.length - 1);
         }
 
+        state.reviewMode = false;
+        state.reviewType = null;
         render();
       }
       function backQuestion() {
@@ -9899,6 +10023,62 @@
           showFeedback("Đã về câu 1");
         }
 
+        state.reviewMode = false;
+        state.reviewType = null;
+        render();
+      }
+
+      function startReview(type) {
+        // type: 'incorrect' hoặc 'correct'
+        const questions =
+          type === "incorrect"
+            ? state.incorrectQuestions
+            : state.correctQuestions;
+        if (questions.length === 0) {
+          showFeedback(
+            type === "incorrect"
+              ? "Không có câu sai nào."
+              : "Không có câu đúng nào.",
+            "warn"
+          );
+          return;
+        }
+        state.reviewMode = true;
+        state.reviewType = type;
+        state.index = 0;
+        state.answered = true;
+        state.session = questions;
+        render();
+      }
+
+      function exitReview() {
+        state.reviewMode = false;
+        state.reviewType = null;
+        state.session = getSessionByMode(state.mode);
+        state.index = 0;
+        state.answered = false;
+        state.selected = null;
+        render();
+      }
+
+      function showHistory() {
+        if (state.history.length === 0) {
+          showFeedback("Chưa có lần làm bài nào.", "warn");
+          return;
+        }
+        state.reviewMode = true;
+        state.reviewType = "history";
+        render();
+      }
+
+      function viewHistoryRound(round) {
+        const historyItem = state.history[round - 1];
+        if (!historyItem) return;
+        state.reviewMode = true;
+        state.reviewType = "history-detail";
+        state.session = [...historyItem.correctQuestions, ...historyItem.incorrectQuestions];
+        state.index = 0;
+        state.answered = true;
         render();
       }
       document
@@ -9953,6 +10133,22 @@
       document
         .getElementById("btnBack")
         .addEventListener("click", backQuestion);
+
+      document
+        .getElementById("btnReviewIncorrect")
+        .addEventListener("click", () => startReview("incorrect"));
+
+      document
+        .getElementById("btnReviewCorrect")
+        .addEventListener("click", () => startReview("correct"));
+
+      document
+        .getElementById("btnExitReview")
+        .addEventListener("click", exitReview);
+
+      document
+        .getElementById("btnHistory")
+        .addEventListener("click", showHistory);
 
       // init
       setMode("chuong1");
