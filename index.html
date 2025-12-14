@@ -384,7 +384,7 @@
                 id="btnReviewCorrect"
                 title="Xem lại các câu đúng"
               >
-               Các câu đúng
+                Các câu đúng
               </button>
               <button
                 class="btn"
@@ -1616,7 +1616,7 @@
               },
               {
                 key: "D",
-                text: "quốc tế này chủ trương thành lập Mặt trận giải phóng dân tộc ở Việt Nam Câu 79: Năm 1929, Hội Việt Nam Cách mạng Thanh niên phân hóa thành các tổ chức… A.\tĐông Dương Cộng Sản Đảng B.\tAn Nam Cộng Sản Đảng *C.\tĐông Dương Cộng Sản Đảng và An Nam Cộng Sản Đảng D.\tĐông Dương Cộng sản Liên Đoàn",
+                text: "quốc tế này chủ trương thành lập Mặt trận giải phóng dân tộc ở Việt Nam",
               },
             ],
             correct: "A",
@@ -9781,9 +9781,10 @@
 
         // Hiển thị history list
         if (state.reviewMode && state.reviewType === "history") {
-          qText.innerHTML = '<strong>Lịch sử các lần làm bài:</strong>';
+          qText.innerHTML = "<strong>Lịch sử các lần làm bài:</strong>";
           answersEl.innerHTML = state.history
-            .map((item) => `
+            .map(
+              (item) => `
               <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; cursor: pointer;" onclick="viewHistoryRound(${item.round})">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                   <div>
@@ -9794,15 +9795,19 @@
                   </div>
                 </div>
               </div>
-            `)
+            `
+            )
             .join("");
           feedback.classList.add("hidden");
           return;
         }
 
         if (state.reviewMode && state.reviewType === "history-detail") {
-          const historyItem = state.history[state.session[idx]?.roundIndex || 0];
-          document.getElementById("pillDataset").textContent = `Lịch sử: Lần ${idx + 1}`;
+          const historyItem =
+            state.history[state.session[idx]?.roundIndex || 0];
+          document.getElementById("pillDataset").textContent = `Lịch sử: Lần ${
+            idx + 1
+          }`;
         }
 
         // Show review info
@@ -9982,7 +9987,7 @@
         clearTimeout(state.waitingAutoNext);
         state.waitingAutoNext = null;
         state.index = Math.min(state.index + 1, state.session.length); // allow pass end
-        
+
         // Only reset answered/selected if not in review mode
         if (!state.reviewMode) {
           state.answered = false;
@@ -10006,7 +10011,7 @@
               total: state.session.length,
               correctQuestions: deepClone(state.correctQuestions),
               incorrectQuestions: deepClone(state.incorrectQuestions),
-              timestamp: new Date().toLocaleTimeString('vi-VN'),
+              timestamp: new Date().toLocaleTimeString("vi-VN"),
             });
             const noKey = state.mode === "lsd_lms";
             const msg = noKey
@@ -10093,7 +10098,10 @@
         if (!historyItem) return;
         state.reviewMode = true;
         state.reviewType = "history-detail";
-        state.session = [...historyItem.correctQuestions, ...historyItem.incorrectQuestions];
+        state.session = [
+          ...historyItem.correctQuestions,
+          ...historyItem.incorrectQuestions,
+        ];
         state.index = 0;
         state.answered = true;
         render();
