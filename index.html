@@ -306,10 +306,7 @@
           <div class="logo" aria-hidden="true"></div>
           <div>
             <h1>CNXHKH Quiz</h1>
-            <div class="sub">
-              Chương 1–7 + CNXHKH_LMS • Responsive • Chọn đáp án là hiện
-              đúng/sai ngay
-            </div>
+            <div class="sub">Chương 1–7</div>
           </div>
         </div>
         <div class="toolbar">
@@ -321,7 +318,6 @@
             <option value="chuong5">Chương 5</option>
             <option value="chuong6">Chương 6</option>
             <option value="chuong7">Chương 7</option>
-            <option value="lsd_lms">CNXHKH_LMS (không có đáp án)</option>
             <option value="random60">Random 50 câu (Ch1–Ch7)</option>
           </select>
           <button
@@ -14892,13 +14888,6 @@
             : mode === "lsd_lms"
             ? "CNXHKH_LMS"
             : "Random 50 (Ch1–Ch7)";
-
-        const noKey = mode === "lsd_lms";
-        document.getElementById("hint").textContent = noKey
-          ? "Bộ CNXHKH_LMS không kèm đáp án trong file nguồn nên chỉ luyện chọn đáp án (không chấm đúng/sai). Link đề gốc tham khảo đáp án : https://azota.vn/de-thi/3xqyfb"
-          : state.manual
-          ? "Chế độ thủ công: chọn đáp án rồi bấm 'Kiểm tra' (và 'Next' để qua câu)."
-          : "Tip: chọn đáp án để hiện đúng/sai. Auto sẽ tự chuyển câu tiếp theo.";
 
         render();
       }
