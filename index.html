@@ -292,6 +292,109 @@
       .hidden {
         display: none !important;
       }
+
+      /* Modal (lịch sử) */
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 50;
+      }
+      .modalCard {
+        width: min(980px, 100%);
+        max-height: min(78vh, 760px);
+        overflow: hidden;
+      }
+      .modalHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .modalBody {
+        margin-top: 12px;
+        display: grid;
+        gap: 10px;
+      }
+      .historyControls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .seg {
+        display: inline-flex;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.12);
+      }
+      .seg button {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .seg button.active {
+        color: var(--text);
+        background: rgba(42, 108, 255, 0.22);
+      }
+      .search {
+        flex: 1;
+        min-width: 220px;
+        background: var(--btn2);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        outline: none;
+      }
+      .historyList {
+        border-top: 1px solid var(--border);
+        padding-top: 10px;
+        max-height: 52vh;
+        overflow: auto;
+      }
+      .hItem {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 10px 12px;
+        background: rgba(0, 0, 0, 0.12);
+        margin-bottom: 10px;
+      }
+      .hItem.good {
+        border-color: rgba(31, 143, 95, 0.7);
+      }
+      .hItem.bad {
+        border-color: rgba(193, 63, 63, 0.7);
+      }
+      .hTop {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .hMeta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .hQ {
+        margin-top: 8px;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+      }
       @media (min-width: 840px) {
         .row {
           grid-template-columns: 1fr;
@@ -337,6 +440,12 @@
           <button class="btn ghost" id="btnReset" title="Làm lại từ đầu">
             Reset
           </button>
+          <button class="btn" id="btnAnsShuffle" title="Xáo trộn vị trí đáp án">
+            Xáo đáp án
+          </button>
+          <button class="btn" id="btnHistory" title="Xem lịch sử đúng/sai">
+            Lịch sử
+          </button>
         </div>
       </div>
 
@@ -354,6 +463,9 @@
               </div>
               <div class="pill">Đúng: <strong id="pillCorrect">0</strong></div>
               <div class="pill">Sai: <strong id="pillWrong">0</strong></div>
+              <div class="pill">
+                Đang làm: <strong id="pillOnline">1</strong>
+              </div>
             </div>
 
             <div class="manualWrap">
@@ -390,6 +502,40 @@
             </div>
             <div class="small" id="qid"></div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lịch sử (modal) -->
+    <div class="modal hidden" id="historyModal" role="dialog" aria-modal="true">
+      <div class="card modalCard">
+        <div class="modalHeader">
+          <div>
+            <div style="font-weight: 800">Lịch sử (đúng/sai)</div>
+            <div class="sub">Lưu trong trình duyệt (localStorage).</div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            <button class="btn ghost" id="btnClearHistory" title="Xoá lịch sử">
+              Xoá
+            </button>
+            <button class="btn" id="btnCloseHistory">Đóng</button>
+          </div>
+        </div>
+        <div class="modalBody">
+          <div class="historyControls">
+            <div class="seg" aria-label="Bộ lọc">
+              <button id="fltAll" class="active" type="button">Tất cả</button>
+              <button id="fltGood" type="button">Đúng</button>
+              <button id="fltBad" type="button">Sai</button>
+            </div>
+            <input
+              id="historySearch"
+              class="search"
+              type="search"
+              placeholder="Tìm theo ID / nội dung câu hỏi…"
+            />
+          </div>
+          <div class="historyList" id="historyList"></div>
         </div>
       </div>
     </div>
@@ -14833,8 +14979,55 @@
         answered: false,
         selected: null,
         manual: false,
+        shuffleAnswers: false,
+        answerOrder: {},
         waitingAutoNext: null,
       };
+
+      const LS_HISTORY = "cnxh_history_v1";
+      const LS_ANS_SHUFFLE = "cnxh_ans_shuffle_v1";
+      const LS_PRESENCE = "cnxh_presence_v1";
+
+      const TAB_ID =
+        (window.crypto && crypto.randomUUID && crypto.randomUUID()) ||
+        "tab_" + Math.random().toString(16).slice(2);
+
+      function readPresence() {
+        try {
+          const raw = localStorage.getItem(LS_PRESENCE);
+          const obj = raw ? JSON.parse(raw) : {};
+          return obj && typeof obj === "object" ? obj : {};
+        } catch {
+          return {};
+        }
+      }
+      function writePresence(obj) {
+        try {
+          localStorage.setItem(LS_PRESENCE, JSON.stringify(obj));
+        } catch {}
+      }
+      function updateOnlineCount() {
+        const now = Date.now();
+        const obj = readPresence();
+        // purge stale (>7s)
+        Object.keys(obj).forEach((k) => {
+          if (!obj[k] || now - obj[k] > 7000) delete obj[k];
+        });
+        const n = Math.max(1, Object.keys(obj).length);
+        const el = document.getElementById("pillOnline");
+        if (el) el.textContent = String(n);
+      }
+      function tickPresence() {
+        const now = Date.now();
+        const obj = readPresence();
+        obj[TAB_ID] = now;
+        // purge stale
+        Object.keys(obj).forEach((k) => {
+          if (!obj[k] || now - obj[k] > 7000) delete obj[k];
+        });
+        writePresence(obj);
+        updateOnlineCount();
+      }
 
       function buildRandom60() {
         const pool = [
@@ -14866,6 +15059,7 @@
         state.wrong = 0;
         state.answered = false;
         state.selected = null;
+        state.answerOrder = {};
         clearTimeout(state.waitingAutoNext);
         state.waitingAutoNext = null;
 
@@ -14903,6 +15097,7 @@
         state.wrong = 0;
         state.answered = false;
         state.selected = null;
+        state.answerOrder = {};
         clearTimeout(state.waitingAutoNext);
         state.waitingAutoNext = null;
         render();
@@ -14910,6 +15105,22 @@
 
       function resetCurrent() {
         setMode(state.mode);
+      }
+
+      function getDisplayedAnswers(q) {
+        const ans = (q?.answers || []).slice();
+        if (!q || !state.shuffleAnswers) return ans;
+
+        const id = q.id ?? String(state.index);
+        if (!state.answerOrder[id]) {
+          const order = ans.map((_, i) => i);
+          for (let i = order.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [order[i], order[j]] = [order[j], order[i]];
+          }
+          state.answerOrder[id] = order;
+        }
+        return state.answerOrder[id].map((i) => ans[i]);
       }
 
       function render() {
@@ -14948,7 +15159,7 @@
 
         const noKey = !q.correct;
 
-        q.answers.forEach((a) => {
+        getDisplayedAnswers(q).forEach((a) => {
           const btn = document.createElement("button");
           btn.className = "answer";
           btn.type = "button";
@@ -15052,6 +15263,120 @@
         fb.classList.add(kind);
       }
 
+      function loadHistory() {
+        try {
+          const raw = localStorage.getItem(LS_HISTORY);
+          const arr = raw ? JSON.parse(raw) : [];
+          return Array.isArray(arr) ? arr : [];
+        } catch {
+          return [];
+        }
+      }
+      function saveHistory(arr) {
+        try {
+          localStorage.setItem(LS_HISTORY, JSON.stringify(arr));
+        } catch {}
+      }
+      function pushHistory(entry) {
+        const arr = loadHistory();
+        arr.unshift(entry);
+        saveHistory(arr.slice(0, 500));
+      }
+
+      let historyFilter = "all";
+      function renderHistory() {
+        const list = document.getElementById("historyList");
+        const q = (document.getElementById("historySearch")?.value || "")
+          .trim()
+          .toLowerCase();
+
+        const rows = loadHistory().filter((r) => {
+          if (historyFilter === "good" && !r.isCorrect) return false;
+          if (historyFilter === "bad" && r.isCorrect) return false;
+          if (!q) return true;
+          return (
+            (r.qid || "").toLowerCase().includes(q) ||
+            (r.qtext || "").toLowerCase().includes(q) ||
+            (r.mode || "").toLowerCase().includes(q)
+          );
+        });
+
+        if (!rows.length) {
+          list.innerHTML =
+            '<div class="small">Chưa có lịch sử (hoặc không khớp bộ lọc).</div>';
+          return;
+        }
+
+        list.innerHTML = rows
+          .map((r) => {
+            const kind = r.isCorrect ? "good" : "bad";
+            const time = new Date(r.ts).toLocaleString();
+            return `
+            <div class="hItem ${kind}">
+              <div class="hTop">
+                <div class="hMeta">${escapeHtml(time)} • <span class="mono">${escapeHtml(
+              r.mode || ""
+            )}</span> • <span class="mono">${escapeHtml(r.qid || "")}</span></div>
+                <div class="pill" style="margin:0;">
+                  ${r.isCorrect ? "✅ Đúng" : "❌ Sai"}
+                </div>
+              </div>
+              <div class="hQ">${escapeHtml(r.qtext || "")}</div>
+              <div class="hMeta" style="margin-top:8px;">
+                Bạn chọn: <strong class="mono">${escapeHtml(
+                  r.selected || ""
+                )}</strong> • Đáp án đúng: <strong class="mono">${escapeHtml(
+              r.correct || ""
+            )}</strong>
+              </div>
+            </div>`;
+          })
+          .join("");
+      }
+
+      function openHistory() {
+        document.getElementById("historyModal").classList.remove("hidden");
+        renderHistory();
+      }
+      function closeHistory() {
+        document.getElementById("historyModal").classList.add("hidden");
+      }
+
+      function updateHistoryFilterUI() {
+        document.getElementById("fltAll").classList.toggle(
+          "active",
+          historyFilter === "all"
+        );
+        document.getElementById("fltGood").classList.toggle(
+          "active",
+          historyFilter === "good"
+        );
+        document.getElementById("fltBad").classList.toggle(
+          "active",
+          historyFilter === "bad"
+        );
+      }
+
+      function getModeLabel(mode) {
+        return mode === "chuong1"
+          ? "Chương 1"
+          : mode === "chuong2"
+          ? "Chương 2"
+          : mode === "chuong3"
+          ? "Chương 3"
+          : mode === "chuong4"
+          ? "Chương 4"
+          : mode === "chuong5"
+          ? "Chương 5"
+          : mode === "chuong6"
+          ? "Chương 6"
+          : mode === "chuong7"
+          ? "Chương 7"
+          : mode === "lsd_lms"
+          ? "CNXHKH_LMS"
+          : "Random 50";
+      }
+
       function gradeNow() {
         const q = state.session[state.index];
         if (!q || !q.correct) return;
@@ -15068,13 +15393,25 @@
 
         state.answered = true;
 
-        if (state.selected === q.correct) {
+        const isCorrect = state.selected === q.correct;
+        if (isCorrect) {
           state.correct += 1;
           showFeedback("✅ ĐÚNG", "good");
         } else {
           state.wrong += 1;
           showFeedback("❌ SAI • Đáp án đúng: " + q.correct, "bad");
         }
+
+        // lưu lịch sử (chỉ khi có đáp án)
+        pushHistory({
+          ts: Date.now(),
+          mode: getModeLabel(state.mode),
+          qid: q.id ?? "",
+          qtext: q.text ?? "",
+          selected: state.selected ?? "",
+          correct: q.correct ?? "",
+          isCorrect,
+        });
 
         applyMarking();
 
@@ -15140,6 +15477,51 @@
         .getElementById("btnReset")
         .addEventListener("click", resetCurrent);
 
+      function updateAnsShuffleBtn() {
+        const b = document.getElementById("btnAnsShuffle");
+        if (!b) return;
+        b.textContent = state.shuffleAnswers ? "Xáo đáp án: ON" : "Xáo đáp án: OFF";
+      }
+
+      document.getElementById("btnAnsShuffle").addEventListener("click", () => {
+        state.shuffleAnswers = !state.shuffleAnswers;
+        state.answerOrder = {};
+        try {
+          localStorage.setItem(LS_ANS_SHUFFLE, JSON.stringify(state.shuffleAnswers));
+        } catch {}
+        updateAnsShuffleBtn();
+        render();
+      });
+
+      // History modal
+      document.getElementById("btnHistory").addEventListener("click", openHistory);
+      document.getElementById("btnCloseHistory").addEventListener("click", closeHistory);
+      document.getElementById("historyModal").addEventListener("click", (e) => {
+        if (e.target && e.target.id === "historyModal") closeHistory();
+      });
+      document.getElementById("btnClearHistory").addEventListener("click", () => {
+        try {
+          localStorage.removeItem(LS_HISTORY);
+        } catch {}
+        renderHistory();
+      });
+      document.getElementById("historySearch").addEventListener("input", renderHistory);
+      document.getElementById("fltAll").addEventListener("click", () => {
+        historyFilter = "all";
+        updateHistoryFilterUI();
+        renderHistory();
+      });
+      document.getElementById("fltGood").addEventListener("click", () => {
+        historyFilter = "good";
+        updateHistoryFilterUI();
+        renderHistory();
+      });
+      document.getElementById("fltBad").addEventListener("click", () => {
+        historyFilter = "bad";
+        updateHistoryFilterUI();
+        renderHistory();
+      });
+
       document
         .getElementById("manualToggle")
         .addEventListener("change", (e) => {
@@ -15175,6 +15557,29 @@
         .addEventListener("click", backQuestion);
 
       // init
+      try {
+        state.shuffleAnswers = JSON.parse(
+          localStorage.getItem(LS_ANS_SHUFFLE) || "false"
+        );
+      } catch {
+        state.shuffleAnswers = false;
+      }
+      updateAnsShuffleBtn();
+
+      // presence (đếm số tab đang mở/trả lời)
+      tickPresence();
+      setInterval(tickPresence, 2000);
+      window.addEventListener("storage", (e) => {
+        if (e.key === LS_PRESENCE) updateOnlineCount();
+      });
+      window.addEventListener("beforeunload", () => {
+        try {
+          const obj = readPresence();
+          delete obj[TAB_ID];
+          writePresence(obj);
+        } catch {}
+      });
+
       setMode("chuong1");
     </script>
   </body>
