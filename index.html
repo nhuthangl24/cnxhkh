@@ -305,6 +305,7 @@
         z-index: 50;
       }
       .modalCard {
+        background-color: #0a0e19;
         width: min(980px, 100%);
         max-height: min(78vh, 760px);
         overflow: hidden;
@@ -15314,9 +15315,13 @@
             return `
             <div class="hItem ${kind}">
               <div class="hTop">
-                <div class="hMeta">${escapeHtml(time)} • <span class="mono">${escapeHtml(
+                <div class="hMeta">${escapeHtml(
+                  time
+                )} • <span class="mono">${escapeHtml(
               r.mode || ""
-            )}</span> • <span class="mono">${escapeHtml(r.qid || "")}</span></div>
+            )}</span> • <span class="mono">${escapeHtml(
+              r.qid || ""
+            )}</span></div>
                 <div class="pill" style="margin:0;">
                   ${r.isCorrect ? "✅ Đúng" : "❌ Sai"}
                 </div>
@@ -15343,18 +15348,15 @@
       }
 
       function updateHistoryFilterUI() {
-        document.getElementById("fltAll").classList.toggle(
-          "active",
-          historyFilter === "all"
-        );
-        document.getElementById("fltGood").classList.toggle(
-          "active",
-          historyFilter === "good"
-        );
-        document.getElementById("fltBad").classList.toggle(
-          "active",
-          historyFilter === "bad"
-        );
+        document
+          .getElementById("fltAll")
+          .classList.toggle("active", historyFilter === "all");
+        document
+          .getElementById("fltGood")
+          .classList.toggle("active", historyFilter === "good");
+        document
+          .getElementById("fltBad")
+          .classList.toggle("active", historyFilter === "bad");
       }
 
       function getModeLabel(mode) {
@@ -15480,32 +15482,45 @@
       function updateAnsShuffleBtn() {
         const b = document.getElementById("btnAnsShuffle");
         if (!b) return;
-        b.textContent = state.shuffleAnswers ? "Xáo đáp án: ON" : "Xáo đáp án: OFF";
+        b.textContent = state.shuffleAnswers
+          ? "Xáo đáp án: ON"
+          : "Xáo đáp án: OFF";
       }
 
       document.getElementById("btnAnsShuffle").addEventListener("click", () => {
         state.shuffleAnswers = !state.shuffleAnswers;
         state.answerOrder = {};
         try {
-          localStorage.setItem(LS_ANS_SHUFFLE, JSON.stringify(state.shuffleAnswers));
+          localStorage.setItem(
+            LS_ANS_SHUFFLE,
+            JSON.stringify(state.shuffleAnswers)
+          );
         } catch {}
         updateAnsShuffleBtn();
         render();
       });
 
       // History modal
-      document.getElementById("btnHistory").addEventListener("click", openHistory);
-      document.getElementById("btnCloseHistory").addEventListener("click", closeHistory);
+      document
+        .getElementById("btnHistory")
+        .addEventListener("click", openHistory);
+      document
+        .getElementById("btnCloseHistory")
+        .addEventListener("click", closeHistory);
       document.getElementById("historyModal").addEventListener("click", (e) => {
         if (e.target && e.target.id === "historyModal") closeHistory();
       });
-      document.getElementById("btnClearHistory").addEventListener("click", () => {
-        try {
-          localStorage.removeItem(LS_HISTORY);
-        } catch {}
-        renderHistory();
-      });
-      document.getElementById("historySearch").addEventListener("input", renderHistory);
+      document
+        .getElementById("btnClearHistory")
+        .addEventListener("click", () => {
+          try {
+            localStorage.removeItem(LS_HISTORY);
+          } catch {}
+          renderHistory();
+        });
+      document
+        .getElementById("historySearch")
+        .addEventListener("input", renderHistory);
       document.getElementById("fltAll").addEventListener("click", () => {
         historyFilter = "all";
         updateHistoryFilterUI();
